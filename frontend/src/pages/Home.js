@@ -1,12 +1,8 @@
 import React, { useState } from "react";
 import { Button, Form, FormGroup, Label, Input } from "reactstrap";
-import guy from "../background/guy.svg";
-import bgmobile from "../background/bgmobile.svg";
-import { Modal } from "react-bootstrap";
 import Spinner from 'react-bootstrap/Spinner'
 import { Link } from 'react-router-dom';
-import uuid from "react-uuid";
-
+import logo from "../background/logo.png";
 const Home = ({ user, setUser }) => {
   const [regNo, setRegNo] = useState("");
   const [password, setPassword] = useState("");
@@ -72,44 +68,62 @@ const Home = ({ user, setUser }) => {
       {
         user ?
           <h1>Logged in as {user.role}</h1>
-          : <>
-            <h1 className="w-50">Web App to Manage Attendance</h1>
-            <Form className="pt-4 w-25" onSubmit={handleLogin}>
-              <FormGroup>
-                <Label className="mb-1">Registration Number / Email ID</Label>
-                <Input
-                  className="mb-3"
-                  type="text"
-                  value={regNo}
-                  placeholder="Reg. No. / Email"
-                  onChange={(e) => { setErrorText(" "); setRegNo(e.target.value) }}
-                ></Input>
-              </FormGroup>
-              <FormGroup>
-                <Label className="mb-1">Password</Label>
-                <Input
-                  className="mb-3"
-                  type="password"
-                  value={password}
-                  placeholder="Password"
-                  onChange={(e) => { setErrorText(" "); setPassword(e.target.value) }}
-                ></Input>
-              </FormGroup>
-              <FormGroup>
-                <Button className="btn btn-md btn-primary">
-                  Log In
-                </Button>
-              </FormGroup>
-              <FormGroup>
-                <span className="mb-1 text-danger">{errorText}</span>
-              </FormGroup>
-            </Form>
-            <div className="pt-4">
-              <small>
-                Developed as part of <Link to="https://github.com/rameeznaufal/attendance-management-system">DBMS final project</Link>
-              </small>
+          : <div className="w-100 d-flex justify-content-between flex-md-row flex-column">
+            <div>
+              <h1>Manage Attendance</h1>
+              <Form className="w-100 mt-4 shadow p-4 rounded" onSubmit={handleLogin}>
+                <FormGroup>
+                  <Label className="mb-1">Registration Number / Email ID</Label>
+                  <Input
+                    className="mb-3"
+                    type="text"
+                    value={regNo}
+                    placeholder="Reg. No. / Email"
+                    onChange={(e) => { setErrorText(" "); setRegNo(e.target.value) }}
+                  ></Input>
+                </FormGroup>
+                <FormGroup>
+                  <Label className="mb-1">Password</Label>
+                  <Input
+                    className="mb-3"
+                    type="password"
+                    value={password}
+                    placeholder="Password"
+                    onChange={(e) => { setErrorText(" "); setPassword(e.target.value) }}
+                  ></Input>
+                </FormGroup>
+                <FormGroup className="text-center">
+                  <Button  style={{ width: 100 }} className="btn btn-md btn-grey mt-2">
+                    {logging ? <Spinner
+                      as="span"
+                      animation="border"
+                      size="sm"
+                      role="status"
+                      aria-hidden="true"
+                    /> : "Log In"}
+                  </Button>
+                </FormGroup>
+                <FormGroup className="text-center">
+                  {errorText !== "" &&
+                    <div className="pb-2">
+                      <span className="text-danger">{errorText}</span>
+                    </div>
+                  }
+                  <div>
+                    <Link to="/forgot-password">Forgot Password</Link>
+                  </div>
+                </FormGroup>
+              </Form>
+              <div className="pt-4">
+                <small>
+                  Developed as part of <Link to="https://github.com/rameeznaufal/attendance-management-system">DBMS final project</Link>
+                </small>
+              </div>
             </div>
-          </>}
+            <img src={logo} alt="AMS Logo" className="logo"></img>
+          </div>
+
+      }
 
     </div>
   );
