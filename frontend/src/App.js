@@ -47,13 +47,13 @@ function App() {
   return (
     <div>
       <BrowserRouter>
-        <NavbarTop user={user} />
+        <NavbarTop user={user} handleLogOut={handleLogOut} />
         <div className="container" >
           <Routes>
             <Route
               path="/"
               exact
-              element={<Home user={user} />}
+              element={<Home user={user} setUser={setUser} />}
             />
             {/* <Route
               path="/login"
