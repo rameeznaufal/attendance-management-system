@@ -1,6 +1,6 @@
 from flask import request, Blueprint, jsonify
 from flask_jwt_extended import get_jwt, unset_jwt_cookies, create_access_token, get_jwt_identity, jwt_required, set_access_cookies
-from notesapp import bcrypt
+from attendanceapp import bcrypt
 from . import db
 from datetime import datetime, timedelta, timezone
 import json
@@ -30,7 +30,7 @@ def user_verify():
     conn = db.get_db()
     cursor = conn.cursor()
     email = get_jwt_identity()
-    cursor.execute("SELECT * FROM tblUsers WHERE email = %s", (email, ))
+    cursor.execute("SELECT * FROM users WHERE email = %s", (email, ))
     user = cursor.fetchone()
     if(user):
         return {'id': user[0], 'name': user[2], 'email': user[1]}, 200
@@ -50,10 +50,10 @@ def edit_user_details(user_id):
         name = content['name']
     except:
         return {"message": "Bad Request"}, 400
-    cursor.execute("SELECT * FROM tblUsers WHERE id = %s", (user_id, ))
+    cursor.execute("SELECT * FROM users WHERE id = %s", (user_id, ))
     user = cursor.fetchone()
     if user and user[1] == get_jwt_identity():
-        cursor.execute("UPDATE tblUsers set name = %s where id = %s", (name, user_id))
+        cursor.execute("UPDATE users set name = %s where id = %s", (name, user_id))
         conn.commit()
         db.close_db()
         return {"message": "Changes saved"}, 200
@@ -69,10 +69,10 @@ def delete_user_details(user_id):
         return {'message': 'Invalid user ID'}, 400    
     conn = db.get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM tblUsers WHERE id = %s", (user_id, ))
+    cursor.execute("SELECT * FROM users WHERE id = %s", (user_id, ))
     user = cursor.fetchone()        
     if user and user[1] == get_jwt_identity():
-        cursor.execute("DELETE FROM tblUsers WHERE id = %s", (user_id, ))
+        cursor.execute("DELETE FROM users WHERE id = %s", (user_id, ))
         conn.commit()
         db.close_db()
         return {'message': 'user deleted successfully'}, 204
@@ -80,32 +80,51 @@ def delete_user_details(user_id):
     return {'message': "User doesn't exist"}, 400
 
 @applet.route('/signup', methods=['POST'])
+@jwt_required()
 def signup():
     conn = db.get_db()
     cursor = conn.cursor()
     content = request.get_json(silent=True)
+    email_admin = get_jwt_identity()
+    cursor.execute("SELECT * FROM admins WHERE email = %s", (email_admin, ))
+    user_admin = cursor.fetchone()
+    if not user_admin:
+        return {'message': 'access denied'}, 401
+    
     try:
         name = content['name']
+        reg_no = content['reg_no']
+        role = content['role']
         email = content['email']
-        password = bcrypt.generate_password_hash(content['password']).decode('utf-8')
+        mobile_no = content['mobile_no']
     except:
         return {"message": "Bad Request"}, 400
-    cursor.execute("SELECT email FROM tblUsers WHERE email = %s", (email, ))
-    user = cursor.fetchone()
-    if(user):
-        db.close_db()
-        return {'message': 'User exists'}, 409
-
-    cursor.execute("INSERT INTO tblUsers (email, name, password) VALUES (%s, %s, %s)", (email, name, password))
-    conn.commit()
     
-    cursor.execute("SELECT * FROM tblUsers WHERE email = %s", (email, ))
-    id, email, name, _ = cursor.fetchone()
-    response = jsonify({'id': id, 'name': name, 'email': email})
-    access_token = create_access_token(identity=email)
-    set_access_cookies(response, access_token)
-    db.close_db()
-    return response
+    try:
+        if role == "student":
+            cursor.execute("SELECT * FROM students WHERE reg_no = %s OR email = %s OR mobile_no = %s", (reg_no, email, mobile_no, ))
+            user_student = cursor.fetchone()
+            if(user_student):
+                db.close_db()
+                return {'message': 'student exists'}, 409
+            cursor.execute("INSERT INTO students (reg_no, email, name, mobile_no, password) VALUES (%s, %s, %s, %s, %s)", (reg_no, email, name, mobile_no, reg_no))
+            conn.commit()
+            db.close_db()
+            return {"message": "student added"}, 201
+
+        else:
+            cursor.execute("SELECT * FROM staffs WHERE staff_id = %s OR email = %s OR mobile_no = %s", (reg_no, email, mobile_no, ))
+            user_staff = cursor.fetchone()
+            if(user_staff):
+                db.close_db()
+                return {'message': 'staff exists'}, 409
+            cursor.execute("INSERT INTO staffs (staff_id, email, name, mobile_no, password) VALUES (%s, %s, %s, %s, %s)", (reg_no, email, name, mobile_no, reg_no))
+            conn.commit()
+            db.close_db()
+            return {"message": "staff added"}, 201
+    except: 
+        db.close_db
+        return {"message": "server error"}, 500
 
 @applet.route('/login', methods=['POST'])
 def login():
@@ -113,21 +132,44 @@ def login():
     cursor = conn.cursor()
     content = request.get_json()
     try:
-        email = content['email']
+        reg_no = content['reg_no']
         password = content['password']
     except:
         return {"message": "Bad Request"}, 400
-    if email:
-        cursor.execute("SELECT * FROM tblUsers WHERE email = %s", (email, ))
-        user = cursor.fetchone()
-        if user and bcrypt.check_password_hash(user[3], password):
-            response = jsonify({'id': user[0], 'name': user[2], 'email': user[1]})
-            access_token = create_access_token(identity=email)
-            set_access_cookies(response, access_token)
-            db.close_db()
-            return response
+    try:
+        if reg_no:
+            cursor.execute("SELECT * FROM students WHERE reg_no = %s", (reg_no, ))
+            user = cursor.fetchone()
+            # if user and bcrypt.check_password_hash(user[4], password):
+            if user and password == user[4]:
+                response = jsonify({'reg_no': user[0], 'email': user[1], 'name': user[2], 'mobile': user[3], 'role': "student"})
+                access_token = create_access_token(identity=reg_no)
+                set_access_cookies(response, access_token)
+                db.close_db()
+                return response
+            cursor.execute("SELECT * FROM staffs WHERE staff_id = %s", (reg_no, ))
+            user = cursor.fetchone()
+            # if user and bcrypt.check_password_hash(user[4], password):
+            if user and password == user[4]:
+                response = jsonify({'reg_no': user[0], 'email': user[1], 'name': user[2], 'mobile': user[3], 'role': "staff"})
+                access_token = create_access_token(identity=reg_no)
+                set_access_cookies(response, access_token)
+                db.close_db()
+                return response
+            cursor.execute("SELECT * FROM admins WHERE email = %s", (reg_no, ))
+            user = cursor.fetchone()
+            # if user and bcrypt.check_password_hash(user[1], password):
+            if user and password == user[1]:
+                response = jsonify({'email': user[0], 'role': "admin"})
+                access_token = create_access_token(identity=reg_no)
+                set_access_cookies(response, access_token)
+                db.close_db()
+                return response
+    except:
+        db.close_db()
+        return {'message': 'Server error'}, 500
     db.close_db()
-    return {'message': 'Invalid email or password'}, 401
+    return {'message': 'invalid reg_no or password'}, 401
 
 @applet.route('/logout', methods = ['POST'])
 @jwt_required()
@@ -145,7 +187,7 @@ def get_all_notes(user_id):
         return {'message': 'Invalid ID'}, 400 
     conn = db.get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM tblUsers WHERE id = %s", (user_id, ))
+    cursor.execute("SELECT * FROM users WHERE id = %s", (user_id, ))
     user = cursor.fetchone()
     if not user:
         db.close_db()
@@ -188,7 +230,7 @@ def add_note(user_id):
         return {'message': 'Bad Request'}, 400 
     conn = db.get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM tblUsers WHERE id = %s", (user_id, ))
+    cursor.execute("SELECT * FROM users WHERE id = %s", (user_id, ))
     user = cursor.fetchone()
     if not user:
         db.close_db()
@@ -237,7 +279,7 @@ def edit_note(user_id, notes_id):
         return {'message': 'Bad Request'}, 400 
     conn = db.get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM tblUsers WHERE id = %s", (user_id, ))
+    cursor.execute("SELECT * FROM users WHERE id = %s", (user_id, ))
     user = cursor.fetchone()
     if not user:
         db.close_db()
@@ -275,7 +317,7 @@ def delete_note(user_id, notes_id):
         return {'message': 'Bad Request'}, 400 
     conn = db.get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM tblUsers WHERE id = %s", (user_id, ))
+    cursor.execute("SELECT * FROM users WHERE id = %s", (user_id, ))
     user = cursor.fetchone()
     if not user:
         db.close_db()

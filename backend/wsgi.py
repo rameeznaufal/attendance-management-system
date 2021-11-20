@@ -1,4 +1,4 @@
-from backend import notesapp
-from notesapp import create_app
+from backend import attendanceapp
+from attendanceapp import create_app
  
-notesapp = create_app()
+attendanceapp = create_app()

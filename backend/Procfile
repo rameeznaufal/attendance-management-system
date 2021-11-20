@@ -1,1 +1,1 @@
-web: gunicorn wsgi:notesapp
+web: gunicorn wsgi:attendanceapp

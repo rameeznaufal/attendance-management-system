@@ -7,7 +7,7 @@ from flask_bcrypt import Bcrypt
 from datetime import timedelta
 
 def create_app():
-    app = Flask("notesapp")
+    app = Flask("attendanceapp")
     
     global bcrypt
     bcrypt = Bcrypt(app)
@@ -32,7 +32,7 @@ def create_app():
     global jwt
     jwt = JWTManager(app)
 
-    from notesapp.mod_users.controller import applet as users_applet
+    from attendanceapp.mod_users.controller import applet as users_applet
     # from . import db 
     # db.init_app(app) 
     # db.create_all()
