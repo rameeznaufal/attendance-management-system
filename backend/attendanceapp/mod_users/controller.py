@@ -107,7 +107,7 @@ def signup():
             if(user_student):
                 db.close_db()
                 return {'message': 'student exists'}, 409
-            cursor.execute("INSERT INTO students (reg_no, email, name, mobile_no, password) VALUES (%s, %s, %s, %s, %s)", (reg_no, email, name, mobile_no, reg_no))
+            cursor.execute("INSERT INTO students (reg_no, email, name, mobile_no, password) VALUES (%s, %s, %s, %s, %s)", (reg_no, email, name, mobile_no, bcrypt.generate_password_hash(reg_no).decode('utf-8')))
             conn.commit()
             db.close_db()
             return {"message": "student added"}, 201
@@ -118,7 +118,7 @@ def signup():
             if(user_staff):
                 db.close_db()
                 return {'message': 'staff exists'}, 409
-            cursor.execute("INSERT INTO staffs (staff_id, email, name, mobile_no, password) VALUES (%s, %s, %s, %s, %s)", (reg_no, email, name, mobile_no, reg_no))
+            cursor.execute("INSERT INTO staffs (staff_id, email, name, mobile_no, password) VALUES (%s, %s, %s, %s, %s)", (reg_no, email, name, mobile_no, bcrypt.generate_password_hash(reg_no).decode('utf-8')))
             conn.commit()
             db.close_db()
             return {"message": "staff added"}, 201
@@ -136,12 +136,12 @@ def login():
         password = content['password']
     except:
         return {"message": "Bad Request"}, 400
+
     try:
         if reg_no:
             cursor.execute("SELECT * FROM students WHERE reg_no = %s", (reg_no, ))
             user = cursor.fetchone()
-            # if user and bcrypt.check_password_hash(user[4], password):
-            if user and password == user[4]:
+            if user and bcrypt.check_password_hash(user[4], password):
                 response = jsonify({'reg_no': user[0], 'email': user[1], 'name': user[2], 'mobile': user[3], 'role': "student"})
                 access_token = create_access_token(identity=reg_no)
                 set_access_cookies(response, access_token)
@@ -149,8 +149,7 @@ def login():
                 return response
             cursor.execute("SELECT * FROM staffs WHERE staff_id = %s", (reg_no, ))
             user = cursor.fetchone()
-            # if user and bcrypt.check_password_hash(user[4], password):
-            if user and password == user[4]:
+            if user and bcrypt.check_password_hash(user[4], password):
                 response = jsonify({'reg_no': user[0], 'email': user[1], 'name': user[2], 'mobile': user[3], 'role': "staff"})
                 access_token = create_access_token(identity=reg_no)
                 set_access_cookies(response, access_token)
@@ -158,8 +157,7 @@ def login():
                 return response
             cursor.execute("SELECT * FROM admins WHERE email = %s", (reg_no, ))
             user = cursor.fetchone()
-            # if user and bcrypt.check_password_hash(user[1], password):
-            if user and password == user[1]:
+            if user and bcrypt.check_password_hash(user[1], password):
                 response = jsonify({'email': user[0], 'role': "admin"})
                 access_token = create_access_token(identity=reg_no)
                 set_access_cookies(response, access_token)
