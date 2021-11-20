@@ -26,11 +26,11 @@ const Home = ({ notes, setUser }) => {
     setErrorText("");
   }
   const handleLogin = async () => {
-    if(!email) {
+    if (!email) {
       setErrorText("Enter Email ID");
       return;
     }
-    if(!password) {
+    if (!password) {
       setErrorText("Enter Password");
       return;
     }
@@ -70,7 +70,7 @@ const Home = ({ notes, setUser }) => {
       setUser(us);
       setLoginModalShow(false);
     } else {
-      if(res.status === 401) {
+      if (res.status === 401) {
         setErrorText("Invalid Email or Password");
       }
       setUser(null);
@@ -78,15 +78,15 @@ const Home = ({ notes, setUser }) => {
     setLogging(false);
   };
   const handleSignUp = async () => {
-    if(!name) {
+    if (!name) {
       setErrorText("Enter Name");
       return;
     }
-    if(!email) {
+    if (!email) {
       setErrorText("Enter Email ID");
       return;
     }
-    if(!password) {
+    if (!password) {
       setErrorText("Enter Password");
       return;
     }
@@ -106,7 +106,7 @@ const Home = ({ notes, setUser }) => {
       setUser(res);
       setSignupModalShow(false);
     } else {
-      if(res.status === 409) {
+      if (res.status === 409) {
         setErrorText("Email ID already exists");
       }
       setUser(null);
@@ -117,21 +117,13 @@ const Home = ({ notes, setUser }) => {
   return (
     <div>
       <div className="d-flex hero-text">
-        <div className="p-5 flex-shrink-1 hero-text">
-          <h1>The No Nonsense Note Taking App .</h1>
+        <div className="lex-shrink-1 hero-text">
+          <h1>Web App to manage attendance</h1>
           <div>
-            <Button className="btn btn-primary mt-3 me-3" onClick={() => setLoginModalShow(true)}>
-              Login
-            </Button>
-            <Button
-              className="btn btn-primary mt-3 me-3"
-              onClick={() => setSignupModalShow(true)}
-            >
-              Sign Up
-            </Button>
+
             <div className="mt-4">
               <small>
-                Developed as part of <Link to="#">Genskill Project</Link>
+                Developed as part of <Link to="https://github.com/rameeznaufal/attendance-management-system">DBMS final project</Link>
               </small>
             </div>
           </div>
@@ -159,7 +151,7 @@ const Home = ({ notes, setUser }) => {
                   type="text"
                   value={email}
                   placeholder="Email ID"
-                  onChange={(e) => {setErrorText(" "); setEmail(e.target.value)}}
+                  onChange={(e) => { setErrorText(" "); setEmail(e.target.value) }}
                 ></Input>
               </FormGroup>
               <FormGroup>
@@ -169,7 +161,7 @@ const Home = ({ notes, setUser }) => {
                   type="password"
                   value={password}
                   placeholder="Password"
-                  onChange={(e) => {setErrorText(" "); setPassword(e.target.value)}}
+                  onChange={(e) => { setErrorText(" "); setPassword(e.target.value) }}
                 ></Input>
               </FormGroup>
               <FormGroup>
@@ -215,14 +207,14 @@ const Home = ({ notes, setUser }) => {
         <Modal.Body>
           <div className="pe-5 ps-5">
             <Form className="login-form">
-            <FormGroup>
+              <FormGroup>
                 <Label className="mb-1">Name</Label>
                 <Input
                   className="mb-3"
                   type="text"
                   value={name}
                   placeholder="Name"
-                  onChange={(e) => {setErrorText(" "); setName(e.target.value)}}
+                  onChange={(e) => { setErrorText(" "); setName(e.target.value) }}
                 ></Input>
               </FormGroup>
               <FormGroup>
@@ -232,7 +224,7 @@ const Home = ({ notes, setUser }) => {
                   type="text"
                   value={email}
                   placeholder="Email ID"
-                  onChange={(e) => {setErrorText(" "); setEmail(e.target.value)}}
+                  onChange={(e) => { setErrorText(" "); setEmail(e.target.value) }}
                 ></Input>
               </FormGroup>
               <FormGroup>
@@ -242,7 +234,7 @@ const Home = ({ notes, setUser }) => {
                   type="password"
                   value={password}
                   placeholder="Password"
-                  onChange={(e) => {setErrorText(" "); setPassword(e.target.value)}}
+                  onChange={(e) => { setErrorText(" "); setPassword(e.target.value) }}
                 ></Input>
               </FormGroup>
               <FormGroup>
