@@ -2,10 +2,8 @@ import "./App.css";
 import { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 // import { BeatLoader } from "react-spinners";
-import uuid from "react-uuid";
 import Home from "./pages/Home.js";
-// import Sidebar from "./components/Sidebar";
-// import Notes from "./components/Note.js";
+import Students from "./pages/Students.js";
 import NavbarTop from "./components/NavbarTop.js";
 import "./custom.scss";
 
@@ -48,12 +46,17 @@ function App() {
     <div>
       <BrowserRouter>
         <NavbarTop user={user} handleLogOut={handleLogOut} />
-        <div className="container" >
+        <div className="container pt-4" >
           <Routes>
             <Route
               path="/"
               exact
               element={<Home user={user} setUser={setUser} />}
+            />
+            <Route
+              path="/students"
+              exact
+              element={<Students user={user} />}
             />
             {/* <Route
               path="/login"
