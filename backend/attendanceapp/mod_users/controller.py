@@ -313,28 +313,3 @@ def edit_note(user_id, notes_id):
     conn.commit()
     db.close_db()
     return {'message': 'note updated succesffully'}, 204
-
-@applet.route('/<user_id>/notes/<notes_id>', methods = ['DELETE'])
-@jwt_required()
-def delete_note(user_id, notes_id):
-    try:
-        user_id = int(user_id)
-    except ValueError:
-        return {'message': 'Bad Request'}, 400 
-    conn = db.get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE id = %s", (user_id, ))
-    user = cursor.fetchone()
-    if not user:
-        db.close_db()
-        return {"message": "User doesn't exist"}, 404
-    if(user[1] != get_jwt_identity()):
-        db.close_db()
-        return {"message": "Access Denied"}, 403
-    cursor.execute("DELETE FROM tblTagsNotes WHERE note_id = %s", (notes_id, ))
-    conn.commit()
-    cursor.execute("DELETE FROM tblNotes WHERE id = %s", (notes_id, ))
-    conn.commit()
-    db.close_db()
-    return {'message': 'note deleted successfully'}, 204
-
