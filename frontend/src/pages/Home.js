@@ -58,6 +58,9 @@ const Home = ({ user, setUser }) => {
       if (res.status === 401) {
         setErrorText("Invalid Email or Password");
       }
+      else {
+        setErrorText("Something went wrong!");
+      }
       setUser(null);
     }
     setLogging(false);
@@ -71,7 +74,7 @@ const Home = ({ user, setUser }) => {
           : <div className="w-100 d-flex justify-content-between flex-md-row flex-column">
             <div>
               <h1>Manage Attendance</h1>
-              <Form className="w-100 mt-4 shadow p-4 rounded" onSubmit={handleLogin}>
+              <Form className="w-100 mt-4 shadow pt-4 ps-4 pe-4 pb-2 rounded" onSubmit={handleLogin}>
                 <FormGroup>
                   <Label className="mb-1">Registration Number / Email ID</Label>
                   <Input
@@ -115,9 +118,9 @@ const Home = ({ user, setUser }) => {
                 </FormGroup>
               </Form>
               <div className="pt-4">
-                <small>
+                <h6>
                   Developed as part of <Link to="https://github.com/rameeznaufal/attendance-management-system">DBMS final project</Link>
-                </small>
+                </h6>
               </div>
             </div>
             <img src={logo} alt="AMS Logo" className="logo"></img>

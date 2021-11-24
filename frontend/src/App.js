@@ -28,21 +28,21 @@ function App() {
     );
   };
 
-  // useEffect(() => {
-  // (async () => {
-  //   let res = await fetch(process.env.REACT_APP_API_URL + "/users/verify", {
-  //     headers: { "Content-Type": "application/json" },
-  //     credentials: "include",
-  //   });
-  //   if (res.ok) {
-  //     res = await res.json();
-  //     setUser(res);
-  //   } else {
-  //     setUser(null);
-  //   }
-  //   setLoading(true);
-  // })();
-  // }, []);
+  useEffect(() => {
+  (async () => {
+    let res = await fetch(process.env.REACT_APP_API_URL + "/users/verify", {
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    });
+    if (res.ok) {
+      res = await res.json();
+      setUser(res);
+    } else {
+      setUser(null);
+    }
+    setLoading(true);
+  })();
+  }, []);
 
   return (
     <div>

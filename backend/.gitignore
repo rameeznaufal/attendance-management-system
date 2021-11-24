@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 env
+=======
+qenv
+>>>>>>> e3f4114c90494b50b00bc162dc64158a11e302c1
 node_modules
 __pycache__
 .env
