@@ -86,7 +86,7 @@ def signup():
     cursor = conn.cursor()
     content = request.get_json(silent=True)
     email_admin = get_jwt_identity()
-    cursor.execute("SELECT * FROM admins WHERE email = %s", (email_admin, ))
+    cursor.execute("SELECT * FROM admin WHERE email = %s", (email_admin, ))
     user_admin = cursor.fetchone()
     if not user_admin:
         return {'message': 'access denied'}, 401
@@ -102,23 +102,23 @@ def signup():
     
     try:
         if role == "student":
-            cursor.execute("SELECT * FROM students WHERE reg_no = %s OR email = %s OR mobile_no = %s", (reg_no, email, mobile_no, ))
+            cursor.execute("SELECT * FROM student WHERE reg_no = %s OR email = %s OR mobile_no = %s", (reg_no, email, mobile_no, ))
             user_student = cursor.fetchone()
             if(user_student):
                 db.close_db()
                 return {'message': 'student exists'}, 409
-            cursor.execute("INSERT INTO students (reg_no, email, name, mobile_no, password) VALUES (%s, %s, %s, %s, %s)", (reg_no, email, name, mobile_no, bcrypt.generate_password_hash(reg_no).decode('utf-8')))
+            cursor.execute("INSERT INTO student (reg_no, email, name, mobile_no, password) VALUES (%s, %s, %s, %s, %s)", (reg_no, email, name, mobile_no, bcrypt.generate_password_hash(reg_no).decode('utf-8')))
             conn.commit()
             db.close_db()
             return {"message": "student added"}, 201
 
         else:
-            cursor.execute("SELECT * FROM staffs WHERE staff_id = %s OR email = %s OR mobile_no = %s", (reg_no, email, mobile_no, ))
+            cursor.execute("SELECT * FROM staff WHERE staff_id = %s OR email = %s OR mobile_no = %s", (reg_no, email, mobile_no, ))
             user_staff = cursor.fetchone()
             if(user_staff):
                 db.close_db()
                 return {'message': 'staff exists'}, 409
-            cursor.execute("INSERT INTO staffs (staff_id, email, name, mobile_no, password) VALUES (%s, %s, %s, %s, %s)", (reg_no, email, name, mobile_no, bcrypt.generate_password_hash(reg_no).decode('utf-8')))
+            cursor.execute("INSERT INTO staff (staff_id, email, name, mobile_no, password) VALUES (%s, %s, %s, %s, %s)", (reg_no, email, name, mobile_no, bcrypt.generate_password_hash(reg_no).decode('utf-8')))
             conn.commit()
             db.close_db()
             return {"message": "staff added"}, 201
@@ -139,7 +139,7 @@ def login():
 
     try:
         if reg_no:
-            cursor.execute("SELECT * FROM students WHERE reg_no = %s", (reg_no, ))
+            cursor.execute("SELECT * FROM student WHERE reg_no = %s", (reg_no, ))
             user = cursor.fetchone()
             if user and bcrypt.check_password_hash(user[4], password):
                 response = jsonify({'reg_no': user[0], 'email': user[1], 'name': user[2], 'mobile': user[3], 'role': "student"})
@@ -147,7 +147,7 @@ def login():
                 set_access_cookies(response, access_token)
                 db.close_db()
                 return response
-            cursor.execute("SELECT * FROM staffs WHERE staff_id = %s", (reg_no, ))
+            cursor.execute("SELECT * FROM staff WHERE staff_id = %s", (reg_no, ))
             user = cursor.fetchone()
             if user and bcrypt.check_password_hash(user[4], password):
                 response = jsonify({'reg_no': user[0], 'email': user[1], 'name': user[2], 'mobile': user[3], 'role': "staff"})
@@ -155,7 +155,7 @@ def login():
                 set_access_cookies(response, access_token)
                 db.close_db()
                 return response
-            cursor.execute("SELECT * FROM admins WHERE email = %s", (reg_no, ))
+            cursor.execute("SELECT * FROM admin WHERE email = %s", (reg_no, ))
             user = cursor.fetchone()
             if user and bcrypt.check_password_hash(user[1], password):
                 response = jsonify({'email': user[0], 'role': "admin"})
