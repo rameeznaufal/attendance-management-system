@@ -29,11 +29,19 @@ def refresh_expiring_jwts(response):
 def user_verify():
     conn = db.get_db()
     cursor = conn.cursor()
-    email = get_jwt_identity()
-    cursor.execute("SELECT * FROM users WHERE email = %s", (email, ))
+    reg_no = get_jwt_identity()
+    cursor.execute("SELECT * FROM student WHERE reg_no = %s", (reg_no, ))
     user = cursor.fetchone()
     if(user):
-        return {'id': user[0], 'name': user[2], 'email': user[1]}, 200
+        return {'reg_no': user[0], 'email': user[1], 'name': user[2], 'mobile': user[3], 'role': "student"}, 200
+    cursor.execute("SELECT * FROM staff WHERE staff_id = %s", (reg_no, ))
+    user = cursor.fetchone()
+    if(user):
+        return {'reg_no': user[0], 'email': user[1], 'name': user[2], 'mobile': user[3], 'role': "staff"}, 200
+    cursor.execute("SELECT * FROM admin WHERE email = %s", (reg_no, ))
+    user = cursor.fetchone()
+    if(user):
+        return {'email': user[0], 'role': "admin"}
     return {'message': 'user doesnt exist'}, 404
 
 @applet.route('/<user_id>', methods = ['PUT'])
