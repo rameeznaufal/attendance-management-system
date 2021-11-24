@@ -12,5 +12,5 @@ jobs:
         with:
           project: Feature Tracking
           column: To Do
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          repo-token: ${{ secrets.GHPROJECT_TOKEN }}
         
