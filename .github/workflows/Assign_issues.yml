@@ -16,4 +16,4 @@ jobs:
         with:
           project: Feature Tracking
           column: Doing
-          repo-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
