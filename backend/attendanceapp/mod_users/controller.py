@@ -1,7 +1,7 @@
 from flask import request, Blueprint, jsonify
 from flask_jwt_extended import get_jwt, unset_jwt_cookies, create_access_token, get_jwt_identity, jwt_required, set_access_cookies
 from attendanceapp import bcrypt
-from . import db
+from .. import db
 from datetime import datetime, timedelta, timezone
 import json
 
@@ -147,7 +147,7 @@ def login():
 
     try:
         if reg_no:
-            cursor.execute("SELECT * FROM student WHERE reg_no = %s", (reg_no, ))
+            cursor.execute("SELECT * FROM student WHERE reg_no = %s OR email = %s", (reg_no, reg_no, ))
             user = cursor.fetchone()
             if user and bcrypt.check_password_hash(user[4], password):
                 response = jsonify({'reg_no': user[0], 'email': user[1], 'name': user[2], 'mobile': user[3], 'role': "student"})
@@ -155,7 +155,7 @@ def login():
                 set_access_cookies(response, access_token)
                 db.close_db()
                 return response
-            cursor.execute("SELECT * FROM staff WHERE staff_id = %s", (reg_no, ))
+            cursor.execute("SELECT * FROM staff WHERE staff_id = %s OR email = %s", (reg_no, reg_no, ))
             user = cursor.fetchone()
             if user and bcrypt.check_password_hash(user[4], password):
                 response = jsonify({'reg_no': user[0], 'email': user[1], 'name': user[2], 'mobile': user[3], 'role': "staff"})
