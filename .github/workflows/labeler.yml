@@ -20,6 +20,7 @@ jobs:
     steps:
     - uses: actions/labeler@v2
       with:
+        add-labels: "triage"
         repo-token: "${{ secrets.GHPROJECT_TOKEN }}"
         
 
