@@ -44,6 +44,7 @@ def user_verify():
         return {'email': user[0], 'role': "admin"}
     return {'message': 'user doesnt exist'}, 404
 
+#Not Implemented
 @applet.route('/<user_id>', methods = ['PUT'])
 @jwt_required()
 def edit_user_details(user_id):
@@ -68,6 +69,49 @@ def edit_user_details(user_id):
     db.close_db()
     return {'message': 'Changes not saved'}, 409   
 
+
+@applet.route('/students/<reg_no>', methods = ['GET'])
+@jwt_required()
+def get_student(reg_no):
+    try:
+        reg_no = int(reg_no)
+    except ValueError:
+        return {'message': 'Invalid ID'}, 400 
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM student WHERE reg_no = %s OR email = %s", (reg_no, reg_no, ))
+    user = cursor.fetchone()
+    if not user:
+        db.close_db()
+        return {"message": "User doesn't exist"}, 404
+    #if(user[1] != get_jwt_identity()):
+    #    db.close_db()
+    #    return {"message": "Access Denied"}, 403
+    response = jsonify({'reg_no': user[0], 'email': user[1], 'name': user[2], 'mobile': user[3], 'role': "student"})
+    db.close_db()
+    return response, 200
+
+@applet.route('/students', methods = ['GET'])
+@jwt_required()
+def get_all_students():
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM student")
+    users = cursor.fetchall()
+    if not users:
+        db.close_db()
+        return {"message": "No users"}, 404
+    #if(user[1] != get_jwt_identity()):
+    #    db.close_db()
+    #    return {"message": "Access Denied"}, 403
+    response = []
+    for user in users:
+        response.append({'reg_no': user[0], 'email': user[1], 'name': user[2], 'mobile': user[3], 'role': "student"})
+    db.close_db()
+    return json.dumps(response), 200
+
+
+#Not Implemented
 @applet.route('/<user_id>', methods = ['DELETE'])
 @jwt_required()
 def delete_user_details(user_id):
@@ -184,6 +228,7 @@ def logout():
     unset_jwt_cookies(response)
     return response
 
+#Not Implemented
 @applet.route('/<user_id>/notes', methods = ['GET'])
 @jwt_required()
 def get_all_notes(user_id):
@@ -215,6 +260,7 @@ def get_all_notes(user_id):
     db.close_db()
     return json.dumps(notes, default = myconverter), 200
 
+#Not Implemented
 @applet.route('/<user_id>/notes', methods = ['POST'])
 @jwt_required()
 def add_note(user_id):
@@ -264,6 +310,7 @@ def add_note(user_id):
     db.close_db()
     return {'id': note_id}, 201
 
+#Not Implemented
 @applet.route('/<user_id>/notes/<notes_id>', methods = ['PUT'])
 @jwt_required()
 def edit_note(user_id, notes_id):
