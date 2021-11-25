@@ -33,10 +33,9 @@ def create_app():
     jwt = JWTManager(app)
 
     from attendanceapp.mod_users.controller import applet as users_applet
-    # from . import db 
-    # db.init_app(app) 
-    # db.create_all()
+    from attendanceapp.mod_courses.controller import applet as courses_applet
     app.register_blueprint(users_applet)
+    app.register_blueprint(courses_applet)
     return app
 
 if __name__ == "__main__":
