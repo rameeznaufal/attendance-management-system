@@ -27,15 +27,15 @@ CREATE TABLE course (
 CREATE TABLE courses_taught (
     staff_id VARCHAR(10),
     course_id VARCHAR(10),
-    FOREIGN KEY (staff_id) REFERENCES staff(staff_id),
-    FOREIGN KEY (course_id) REFERENCES course(course_id)
+    FOREIGN KEY (staff_id) REFERENCES staff(staff_id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES course(course_id) ON DELETE CASCADE
 );
 
 CREATE TABLE enrolled (
     reg_no VARCHAR(10),
     course_id VARCHAR(10),
-    FOREIGN KEY (reg_no) REFERENCES student(reg_no),
-    FOREIGN KEY (course_id) REFERENCES course(course_id)
+    FOREIGN KEY (reg_no) REFERENCES student(reg_no) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES course(course_id) ON DELETE CASCADE
 );
 
 CREATE TABLE slot (
@@ -49,8 +49,8 @@ CREATE TABLE class (
     course_id VARCHAR(10) NOT NULL,
     class_date TIMESTAMP NOT NULL,
     slot_id INT NOT NULL,
-    FOREIGN KEY (course_id) REFERENCES course(course_id),
-    FOREIGN KEY (slot_id) REFERENCES slot(slot_id),
+    FOREIGN KEY (course_id) REFERENCES course(course_id) ON DELETE CASCADE,
+    FOREIGN KEY (slot_id) REFERENCES slot(slot_id) ON DELETE CASCADE,
     PRIMARY KEY(class_id, course_id)
 );
 
@@ -59,7 +59,7 @@ CREATE TABLE attendance (
     class_id INT,
     course_id VARCHAR(10),
     status INT NOT NULL,    
-    FOREIGN KEY (reg_no) REFERENCES student(reg_no),
-    FOREIGN KEY (class_id, course_id) REFERENCES class(class_id, course_id),
+    FOREIGN KEY (reg_no) REFERENCES student(reg_no) ON DELETE CASCADE,
+    FOREIGN KEY (class_id, course_id) REFERENCES class(class_id, course_id) ON DELETE CASCADE,
     PRIMARY KEY(reg_no, class_id, course_id)
 );
