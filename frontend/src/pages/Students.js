@@ -86,7 +86,7 @@ const Students = () => {
             <Link className="" to="/">
               Home
             </Link>{" "}
-            > Students
+            &#62; Students
           </h5>
         </div>
         <Link className="btn btn-primary" to="/students/add">

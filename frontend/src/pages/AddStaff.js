@@ -10,17 +10,17 @@ import {
 } from "reactstrap";
 import Spinner from "react-bootstrap/Spinner";
 
-const AddStudent = ({ user }) => {
+const AddStaff = ({ user }) => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
-    const [reg_no, setReg_no] = useState("");
+    const [staff_id, setStaff_id] = useState("");
     const [mobile, setMobile] = useState("");
     const [adding, setAdding] = useState(false);
 
-    const addStudent = async(e) => {
+    const addStaff = async(e) => {
         e.preventDefault();
         setAdding(true);
-        let res = await fetch(process.env.REACT_APP_API_URL + "/users/students/", {
+        let res = await fetch(process.env.REACT_APP_API_URL + "/users/staffs/", {
         headers: { "Content-Type": "application/json" },
         method: "POST",
         credentials: "include",
@@ -28,7 +28,7 @@ const AddStudent = ({ user }) => {
             "name": name,
             "email": email,
             "mobile": mobile,
-            "reg_no": reg_no
+            "staff_id": staff_id
         }),
         });
         if (res.ok) {
@@ -44,15 +44,15 @@ const AddStudent = ({ user }) => {
           <h5>
             <Link className="" to="/">
               Home
-            </Link> &#62; <Link className="" to="/students">
-              Students
+            </Link> &#62; <Link className="" to="/staffs">
+              Staffs
             </Link>
             &#62; Add
           </h5>
         </div>
       </div>
       <div className="d-flex w-100 flex-column justify-content-center align-items-center shadow rounded p-3 mb-3">
-          <Form className="col-12 col-md-4" onSubmit={addStudent}>
+          <Form className="col-12 col-md-4" onSubmit={addStaff}>
             <FormGroup>
               <Label>Full Name</Label>
               <Input
@@ -71,8 +71,8 @@ const AddStudent = ({ user }) => {
               <Input
                 className="col-lg-6"
                 type="text"
-                value={reg_no}
-                onChange={(e) => {setReg_no(e.target.value);}}
+                value={staff_id}
+                onChange={(e) => {setStaff_id(e.target.value);}}
                 placeholder="Reg. No."
                 required
               ></Input>
@@ -124,4 +124,4 @@ const AddStudent = ({ user }) => {
     );
 };
 
-export default AddStudent;
+export default AddStaff;
