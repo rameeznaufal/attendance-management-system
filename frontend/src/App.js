@@ -2,10 +2,13 @@ import "./App.css";
 import { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home.js";
-import Students from "./pages/Students.js";
-import AddStudent from "./pages/AddStudent.js";
-import Staffs from "./pages/Staffs.js";
-import AddStaff from "./pages/AddStaff.js";
+import Students from "./pages/admin/Students.js";
+import AddStudent from "./pages/admin/AddStudent.js";
+import Staffs from "./pages/admin/Staffs.js";
+import AddStaff from "./pages/admin/AddStaff.js";
+import Courses from "./pages/admin/Courses.js";
+import AddCourse from "./pages/admin/AddCourse.js"
+
 import NavbarTop from "./components/NavbarTop.js";
 import "./custom.scss";
 
@@ -61,6 +64,12 @@ function App() {
               path="/staffs/add"
               exact
               element={<AddStaff user={user} />}
+            />
+            <Route path="/courses" exact element={<Courses user={user} />} />
+            <Route
+              path="/courses/add"
+              exact
+              element={<AddCourse user={user} />}
             />
           </Routes>
         </div>

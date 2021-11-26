@@ -3,9 +3,9 @@ import { Button, Form, FormGroup, Label, Input } from "reactstrap";
 import Spinner from "react-bootstrap/Spinner";
 import { Link } from "react-router-dom";
 import logo from "../background/logo.png";
-import AdminHome from "./users/AdminHome.js";
-import StaffHome from "./users/StaffHome.js";
-import StudentHome from "./users/StudentHome.js";
+import AdminHome from "./admin/AdminHome.js";
+import StaffHome from "./staff/StaffHome.js";
+import StudentHome from "./student/StudentHome.js";
 
 const Home = ({ user, setUser }) => {
   const [regNo, setRegNo] = useState("");
