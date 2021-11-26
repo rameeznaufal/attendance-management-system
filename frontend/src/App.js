@@ -1,9 +1,9 @@
 import "./App.css";
 import { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-// import { BeatLoader } from "react-spinners";
 import Home from "./pages/Home.js";
 import Students from "./pages/Students.js";
+import AddStudent from "./pages/AddStudent.js";
 import NavbarTop from "./components/NavbarTop.js";
 import "./custom.scss";
 
@@ -58,21 +58,11 @@ function App() {
               exact
               element={<Students user={user} />}
             />
-            {/* <Route
-              path="/login"
-              exact
-              element={<Login user={user} />}
-            />
             <Route
-              path="/profile"
+              path="/students/add"
               exact
-              element={<Profile user={user} />}
+              element={<AddStudent user={user} />}
             />
-            <Route
-              path="/add"
-              exact
-              element={<AddSwag user={user} />}
-            /> */}
           </Routes>
         </div>
       </BrowserRouter>
