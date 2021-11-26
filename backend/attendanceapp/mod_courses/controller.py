@@ -38,6 +38,47 @@ def get_all_courses():
     db.close_db()
     return json.dumps(response), 200
 
+@applet.route('/', methods = ['POST'])
+@jwt_required()
+def add_course():
+    
+    conn = db.get_db()
+    cursor = conn.cursor()
+
+    content = request.get_json(silent=True)
+    try:
+        course_id = content['course_id']
+        course_name = content['course_name']
+    except:
+        return {"message": "Bad Request"}, 400
+
+    cursor.execute("insert into course values (%s,%s)", (course_id,course_name,))
+    conn.coomit()
+    db.close_db()
+    return 201
+
+#to be modified
+@applet.route('/', methods = ['PUT'])
+@jwt_required()
+def edit_course_details(course_id):
+    conn = db.get_db()
+    cursor = conn.cursor()
+    content = request.get_json(silent=True)
+    try:
+        course_name = content['course_name']
+    except:
+        return {"message": "Bad Request"}, 400
+    cursor.execute("SELECT * FROM course WHERE course_id = %s", (course_id, ))
+    course = cursor.fetchone()
+    if course:
+        cursor.execute("UPDATE course set course_name = %s where course_id = %s", (course_name, course_id,))
+        conn.commit()
+        db.close_db()
+        return {"message": "Changes saved"}, 200
+    db.close_db()
+    return {'message': 'Changes not saved'}, 409   
+
+
 @applet.route('/<course_id>', methods = ['GET'])
 @jwt_required()
 def get_course_details(course_id):
