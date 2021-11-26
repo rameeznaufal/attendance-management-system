@@ -5,7 +5,7 @@ from .. import db
 from datetime import datetime, timedelta, timezone
 import json
 
-applet = Blueprint('users', __name__, url_prefix='/api/users')
+applet = Blueprint('attendance', __name__, url_prefix='/api/attendance')
 
 def myconverter(o):
     if isinstance(o, datetime):
@@ -24,40 +24,52 @@ def refresh_expiring_jwts(response):
     except (RuntimeError, KeyError):
         return response
 
-@applet.route('/verify', methods = ['GET'])
+@applet.route('/add', methods = ['POST'])
 @jwt_required()
-def user_verify():
+def add_class_attendance():
     conn = db.get_db()
     cursor = conn.cursor()
-    reg_no = get_jwt_identity()
-    cursor.execute("SELECT * FROM student WHERE reg_no = %s", (reg_no, ))
-    user = cursor.fetchone()
-    if(user):
-        return {'reg_no': user[0], 'email': user[1], 'name': user[2], 'mobile': user[3], 'role': "student"}, 200
-    cursor.execute("SELECT * FROM staff WHERE staff_id = %s", (reg_no, ))
-    user = cursor.fetchone()
-    if(user):
-        return {'reg_no': user[0], 'email': user[1], 'name': user[2], 'mobile': user[3], 'role': "staff"}, 200
-    cursor.execute("SELECT * FROM admin WHERE email = %s", (reg_no, ))
-    user = cursor.fetchone()
-    if(user):
-        return {'email': user[0], 'role': "admin"}
-    return {'message': 'user doesnt exist'}, 404
-
-#----------------------------------------------------------STUDENT
-@applet.route('/students/<reg_no>', methods = ['GET'])
-@jwt_required()
-def get_student(reg_no):
-    conn = db.get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM student WHERE reg_no = %s OR email = %s", (reg_no, reg_no, ))
-    user = cursor.fetchone()
-    if not user:
+    content = request.get_json(silent=True)
+    try:
+        course_id = content['name']
+        class_id = content['email']
+    except:
         db.close_db()
-        return {"message": "Student doesn't exist"}, 404
-    response = jsonify({'reg_no': user[0], 'email': user[1], 'name': user[2], 'mobile': user[3]})
-    db.close_db()
-    return response, 200
+        return {"message": "Bad Request"}, 400
+    try:
+        cursor.execute("SELECT reg_no FROM student")
+        students = cursor.fetchall()
+        for student in students:
+            cursor.execute("INSERT INTO attendance VALUES(%s,%s,%s,0)", (student, class_id, course_id))
+        conn.commit()
+        db.close_db()
+        return {'message': 'Class attendance for students added'}, 204   
+    except:
+        db.close_db()
+        return {'message': 'Class attendance could not be added'}, 500
+
+@applet.route('/mark', methods = ['PUT'])
+@jwt_required()
+def mark_attendance():
+    conn = db.get_db()
+    cursor = conn.cursor()
+    content = request.get_json(silent=True)
+    try:
+        course_id = content['name']
+        class_id = content['email']
+        status =  int(content['status'])
+    except:
+        db.close_db()
+        return {"message": "Bad Request"}, 400
+    try:
+        reg_no = get_jwt_identity()
+        cursor.execute("UPDATE attendance SET status = %d WHERE course_id = %s AND class_id = %s AND reg_no = %s ", (status, course_id, class_id, reg_no, ))
+        conn.commit()
+        db.close_db()
+        return {'message': 'Attendance marked'}, 204   
+    except:
+        db.close_db()
+        return {'message': 'Attendance could not be marked'}, 500
 
 @applet.route('/students/<reg_no>', methods = ['PUT'])
 @jwt_required()
