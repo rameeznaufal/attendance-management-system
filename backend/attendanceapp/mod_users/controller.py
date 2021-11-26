@@ -24,6 +24,34 @@ def refresh_expiring_jwts(response):
     except (RuntimeError, KeyError):
         return response
 
+@applet.route('/student/<reg_no>', methods = ['GET'])
+@jwt_required()
+def get_courses_of_student(reg_no):
+    
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT c.course_id, c.course_name FROM enrolled e, course c where e.reg_no=%s AND e.course_id=c.course_id",(reg_no,))
+    courses = cursor.fetchall()
+    response=[]
+    for course in courses:
+        response.append({'course_id':course[0],'course_name':course[1]})
+    db.close_db()
+    return json.dumps(response), 200
+
+@applet.route('/staff/<staff_id>', methods = ['GET'])
+@jwt_required()
+def get_courses_of_staff(staff_id):
+    
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT c.course_id, c.course_name FROM courses_taught s, course c where s.staff_id=%s AND s.course_id=c.course_id",(staff_id,))
+    courses = cursor.fetchall()
+    response=[]
+    for course in courses:
+        response.append({'course_id':course[0],'course_name':course[1]})
+    db.close_db()
+    return json.dumps(response), 200
+
 @applet.route('/verify', methods = ['GET'])
 @jwt_required()
 def user_verify():
