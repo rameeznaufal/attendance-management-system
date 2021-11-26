@@ -24,6 +24,53 @@ def refresh_expiring_jwts(response):
     except (RuntimeError, KeyError):
         return response
 
+@applet.route('/', methods = ['GET'])
+@jwt_required()
+def get_all_courses():
+    
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM course")
+    courses = cursor.fetchall()
+    response=[]
+    for course in courses:
+        response.append({'course_id':course[0],'course_name':course[1]})
+    db.close_db()
+    return json.dumps(response), 200
+
+@applet.route('/<course_id>', methods = ['GET'])
+@jwt_required()
+def get_course_details(course_id):
+    
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT course_id,course_name FROM course where (course_id=%s OR course_name=%s)",(course_id,course_id,))
+    course_details=cursor.fetchone()
+    coursef_id=course_details[0]
+    coursef_name=course_details[1]
+
+    cursor.execute("SELECT s.staff_id, s.name FROM courses_taught t, staff s where t.course_id=%s AND s.staff_id=t.staff_id",(coursef_id,))
+    staffs = cursor.fetchall()
+    response=[]
+    staff_list=[]
+    for staff in staffs:
+        staff_list.append({'staff_id':staff[0],'staff_name': staff[1]})
+    response.append({'course_id':coursef_id,'course_name':coursef_name,'staffs':staff_list})
+    db.close_db()
+    return json.dumps(response), 200
+
+@applet.route('/<course_id>', methods = ['DELETE'])
+@jwt_required()
+def get_course_details(course_id):
+    
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM course where course_id=%s", (course_id,))
+    conn.commit()
+    db.close_db()
+    return 204
+
+
 @applet.route('/<user_id>', methods = ['PUT'])
 @jwt_required()
 def edit_user_details(user_id):
