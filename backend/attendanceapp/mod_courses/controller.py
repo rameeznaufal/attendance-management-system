@@ -46,6 +46,8 @@ def get_course_details(course_id):
     cursor = conn.cursor()
     cursor.execute("SELECT course_id,course_name FROM course where (course_id=%s OR course_name=%s)",(course_id,course_id,))
     course_details=cursor.fetchone()
+    if not course_details:
+        return{'message': 'Course does not exist'}, 404
     coursef_id=course_details[0]
     coursef_name=course_details[1]
 
@@ -61,7 +63,7 @@ def get_course_details(course_id):
 
 @applet.route('/<course_id>', methods = ['DELETE'])
 @jwt_required()
-def get_course_details(course_id):
+def delete_course_details(course_id):
     
     conn = db.get_db()
     cursor = conn.cursor()
