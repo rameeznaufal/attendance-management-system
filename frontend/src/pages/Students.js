@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FiPenTool, FiSearch, FiUserPlus } from "react-icons/fi";
+import { FiSearch, FiUserPlus } from "react-icons/fi";
 import { MdDelete, MdEdit } from "react-icons/md";
 import {
   Button,
@@ -10,10 +10,10 @@ import {
   FormFeedback,
   Label,
 } from "reactstrap";
-import { Spinner } from "react-spinners";
+import Spinner from "react-bootstrap/Spinner";
 
 const Students = () => {
-  const [regNo, setRegNo] = useState("");
+  const [reg_no, setreg_no] = useState("");
   const [searching, setSearching] = useState(false);
   const [errorText, setErrorText] = useState(false);
   const [student, setStudent] = useState(null);
@@ -22,64 +22,57 @@ const Students = () => {
 
   const updateValue = (colName, val) => {
     setStudent({ ...student, [colName]: val });
-    console.log(student);
   };
 
   const searchStudent = async (e) => {
     e.preventDefault();
     setSearching(true);
-    setStudent({
-      regNo: "B190703CS",
-      name: "Muhammed Jaseem Pallikkal",
-      email: "muhammedjaseem_b190703cs@nitc.ac.in",
-      mobile: "7511135725",
-    });
-    // let res = await fetch(process.env.REACT_APP_API_URL + "/users/" + regNo, {
-    //   headers: { "Content-Type": "application/json" },
-    //   method: "GET",
-    //   credentials: "include",
-    //   body: JSON.stringify({
-    //     reg_no: regNo,
-    //   }),
-    // });
-    // if (res.ok) {
-    //   let student = await res.json();
-    //   console.log(student);
-    //   setStudent(student);
-    // } else {
-    //   setErrorText(true);
-    //   setStudent(null);
-    // }
+    let res = await fetch(
+      process.env.REACT_APP_API_URL + "/users/students/" + reg_no,
+      {
+        headers: { "Content-Type": "application/json" },
+        method: "GET",
+        credentials: "include",
+      }
+    );
+    if (res.ok) {
+      let student = await res.json();
+      console.log(student);
+      setStudent(student);
+    } else {
+      setErrorText(true);
+      setStudent(null);
+    }
     setSearching(false);
     return;
   };
 
   const editStudent = async () => {
     setEditing(true);
-    // let res = await fetch(process.env.REACT_APP_API_URL + "/users/" + regNo, {
-    //   headers: { "Content-Type": "application/json" },
-    //   method: "PUT",
-    //   credentials: "include",
-    //   body: JSON.stringify(student),
-    // });
-    // if (res.ok) {
-    // } else {
-    //   setErrorText(true);
-    // }
+    let res = await fetch(process.env.REACT_APP_API_URL + "/users/students/" + student.reg_no, {
+      headers: { "Content-Type": "application/json" },
+      method: "PUT",
+      credentials: "include",
+      body: JSON.stringify(student),
+    });
+    if (res.ok) {
+    } else {
+      console.log("Could not update");
+    }
     setEditing(false);
     return;
   };
   const deleteStudent = async () => {
     setDeleting(true);
-    // let res = await fetch(process.env.REACT_APP_API_URL + "/users/" + regNo, {
-    //   headers: { "Content-Type": "application/json" },
-    //   method: "DELETE",
-    //   credentials: "include",
-    // });
-    // if (res.ok) {
-    // } else {
-    //   setErrorText(true);
-    // }
+    let res = await fetch(process.env.REACT_APP_API_URL + "/users/students/" + student.reg_no, {
+      headers: { "Content-Type": "application/json" },
+      method: "DELETE",
+      credentials: "include",
+    });
+    if (res.ok) {
+    } else {
+      console.log("Could not delete")
+    }
     setStudent(null);
     setDeleting(false);
     return;
@@ -107,10 +100,10 @@ const Students = () => {
             <Input
               className="col-lg-6"
               type="text"
-              value={regNo}
+              value={reg_no}
               placeholder="Reg. No. / Email"
               onChange={(e) => {
-                setRegNo(e.target.value);
+                setreg_no(e.target.value);
                 setErrorText(false);
               }}
               required
@@ -119,13 +112,23 @@ const Students = () => {
             <FormFeedback invalid>Student could not be found</FormFeedback>
           </FormGroup>
           <FormGroup className="text-center">
-            {searching ? (
-              <Spinner size="25" />
-            ) : (
-              <Button className="btn btn-primary">
+            <Button
+              className="btn btn-primary"
+              type="submit"
+              style={{ width: 50, height: 40 }}
+            >
+              {searching ? (
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                />
+              ) : (
                 <FiSearch size="25" />
-              </Button>
-            )}
+              )}
+            </Button>
           </FormGroup>
         </Form>
         {student && (
@@ -148,7 +151,7 @@ const Students = () => {
               <Input
                 className="col-lg-6"
                 type="text"
-                value={student.regNo}
+                value={student.reg_no}
                 placeholder="Reg. No."
                 readOnly
               ></Input>
@@ -180,18 +183,30 @@ const Students = () => {
               ></Input>
             </FormGroup>
             <FormGroup className="text-center pt-1">
-              <Button className="btn btn-dark me-3" onClick={editStudent}>
+              <Button className="btn btn-dark me-3" style={{ width: 50, height: 40 }} onClick={editStudent}>
                 {editing ? (
-                  <Spinner size="25" />
+                  <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                />
                 ) : (
-                  <MdEdit size="25" color="white" />
+                <MdEdit size="25" color="white" />
                 )}
               </Button>
-              <Button className="btn btn-danger" onClick={deleteStudent}>
+              <Button className="btn btn-danger" style={{ width: 50, height: 40 }} onClick={deleteStudent}>
                 {deleting ? (
-                  <Spinner size="25" />
+                  <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                />
                 ) : (
-                  <MdDelete size="25" color="white" />
+                <MdDelete size="25" color="white" />
                 )}
               </Button>
             </FormGroup>

@@ -44,52 +44,73 @@ def user_verify():
         return {'email': user[0], 'role': "admin"}
     return {'message': 'user doesnt exist'}, 404
 
-#Not Implemented
-@applet.route('/<user_id>', methods = ['PUT'])
-@jwt_required()
-def edit_user_details(user_id):
-    try:
-        user_id = int(user_id)
-    except ValueError:
-        return {'message': 'Invalid user ID'}, 400 
-    conn = db.get_db()
-    cursor = conn.cursor()
-    content = request.get_json(silent=True)
-    try:
-        name = content['name']
-    except:
-        return {"message": "Bad Request"}, 400
-    cursor.execute("SELECT * FROM users WHERE id = %s", (user_id, ))
-    user = cursor.fetchone()
-    if user and user[1] == get_jwt_identity():
-        cursor.execute("UPDATE users set name = %s where id = %s", (name, user_id))
-        conn.commit()
-        db.close_db()
-        return {"message": "Changes saved"}, 200
-    db.close_db()
-    return {'message': 'Changes not saved'}, 409   
-
-
 @applet.route('/students/<reg_no>', methods = ['GET'])
 @jwt_required()
 def get_student(reg_no):
-    try:
-        reg_no = int(reg_no)
-    except ValueError:
-        return {'message': 'Invalid ID'}, 400 
     conn = db.get_db()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM student WHERE reg_no = %s OR email = %s", (reg_no, reg_no, ))
     user = cursor.fetchone()
     if not user:
         db.close_db()
-        return {"message": "User doesn't exist"}, 404
-    #if(user[1] != get_jwt_identity()):
-    #    db.close_db()
-    #    return {"message": "Access Denied"}, 403
-    response = jsonify({'reg_no': user[0], 'email': user[1], 'name': user[2], 'mobile': user[3], 'role': "student"})
+        return {"message": "Student doesn't exist"}, 404
+    response = jsonify({'reg_no': user[0], 'email': user[1], 'name': user[2], 'mobile': user[3]})
     db.close_db()
     return response, 200
+
+@applet.route('/students/<reg_no>', methods = ['PUT'])
+@jwt_required()
+def edit_student_details(reg_no):
+    conn = db.get_db()
+    cursor = conn.cursor()
+    content = request.get_json(silent=True)
+    try:
+        name = content['name']
+        email = content['email']
+        mobile = content['mobile']
+    except:
+        return {"message": "Bad Request"}, 400
+    try:
+        cursor.execute("UPDATE student SET name = %s, email = %s, mobile_no = %s WHERE reg_no = %s", (name, email, mobile, reg_no, ))
+        conn.commit()
+        db.close_db()
+        return {'message': 'Changes saved'}, 204   
+    except:
+        db.close_db()
+        return {'message': 'Changes could not be saved'}, 500
+
+@applet.route('/students/<reg_no>', methods = ['DELETE'])
+@jwt_required()
+def delete_user_details(reg_no):
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM student WHERE reg_no = %s", (reg_no, ))
+    conn.commit()
+    db.close_db()
+    return {'message': 'user deleted successfully'}, 204
+
+@applet.route('/students', methods = ['POST'])
+@jwt_required()
+def add_student():
+    conn = db.get_db()
+    cursor = conn.cursor()
+    content = request.get_json(silent=True)
+    try:
+        name = content['name']
+        email = content['email']
+        mobile = content['mobile']
+        reg_no = content['reg_no']
+        password = password = bcrypt.generate_password_hash(content['reg_no']).decode('utf-8')
+    except:
+        return {"message": "Bad Request"}, 400
+    try:
+        cursor.execute("INSERT INTO student VALUES(%s, %s, %s, %s, %s)", (reg_no, email, name, mobile, password, ))
+        conn.commit()
+        db.close_db()
+    except:
+        db.close_db()
+        return {'message': 'Student already exists'}, 409 
+    return {'message': 'Student created successfully'}, 201
 
 @applet.route('/students', methods = ['GET'])
 @jwt_required()
@@ -101,35 +122,11 @@ def get_all_students():
     if not users:
         db.close_db()
         return {"message": "No users"}, 404
-    #if(user[1] != get_jwt_identity()):
-    #    db.close_db()
-    #    return {"message": "Access Denied"}, 403
     response = []
     for user in users:
         response.append({'reg_no': user[0], 'email': user[1], 'name': user[2], 'mobile': user[3], 'role': "student"})
     db.close_db()
     return json.dumps(response), 200
-
-
-#Not Implemented
-@applet.route('/<user_id>', methods = ['DELETE'])
-@jwt_required()
-def delete_user_details(user_id):
-    try:
-        user_id = int(user_id)
-    except ValueError:
-        return {'message': 'Invalid user ID'}, 400    
-    conn = db.get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE id = %s", (user_id, ))
-    user = cursor.fetchone()        
-    if user and user[1] == get_jwt_identity():
-        cursor.execute("DELETE FROM users WHERE id = %s", (user_id, ))
-        conn.commit()
-        db.close_db()
-        return {'message': 'user deleted successfully'}, 204
-    db.close_db()
-    return {'message': "User doesn't exist"}, 400
 
 @applet.route('/signup', methods=['POST'])
 @jwt_required()
