@@ -44,10 +44,10 @@ const AddStudent = ({ user }) => {
           <h5>
             <Link className="" to="/">
               Home
-            </Link> > <Link className="" to="/students">
+            </Link> &#62; <Link className="" to="/students">
               Students
             </Link>
-            > Add
+            &#62; Add
           </h5>
         </div>
       </div>

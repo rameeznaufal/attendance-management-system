@@ -72,6 +72,7 @@ def user_verify():
         return {'email': user[0], 'role': "admin"}
     return {'message': 'user doesnt exist'}, 404
 
+#----------------------------------------------------------STUDENT
 @applet.route('/students/<reg_no>', methods = ['GET'])
 @jwt_required()
 def get_student(reg_no):
@@ -109,7 +110,7 @@ def edit_student_details(reg_no):
 
 @applet.route('/students/<reg_no>', methods = ['DELETE'])
 @jwt_required()
-def delete_user_details(reg_no):
+def delete_student_details(reg_no):
     conn = db.get_db()
     cursor = conn.cursor()
     cursor.execute("DELETE FROM student WHERE reg_no = %s", (reg_no, ))
@@ -141,7 +142,7 @@ def add_student():
     return {'message': 'Student created successfully'}, 201
 
 @applet.route('/students', methods = ['GET'])
-@jwt_required()
+#@jwt_required()
 def get_all_students():
     conn = db.get_db()
     cursor = conn.cursor()
@@ -156,6 +157,92 @@ def get_all_students():
     db.close_db()
     return json.dumps(response), 200
 
+#----------------------------------------------------------- STAFF
+@applet.route('/staffs/<staff_id>', methods = ['GET'])
+@jwt_required()
+def get_staff(staff_id):
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM staff WHERE staff_id = %s OR email = %s", (staff_id, staff_id, ))
+    user = cursor.fetchone()
+    if not user:
+        db.close_db()
+        return {"message": "Staff doesn't exist"}, 404
+    response = jsonify({'staff_id': user[0], 'email': user[1], 'name': user[2], 'mobile': user[3]})
+    db.close_db()
+    return response, 200
+
+@applet.route('/staffs/<staff_id>', methods = ['PUT'])
+@jwt_required()
+def edit_staff_details(staff_id):
+    conn = db.get_db()
+    cursor = conn.cursor()
+    content = request.get_json(silent=True)
+    try:
+        name = content['name']
+        email = content['email']
+        mobile = content['mobile']
+    except:
+        return {"message": "Bad Request"}, 400
+    try:
+        cursor.execute("UPDATE staff SET name = %s, email = %s, mobile_no = %s WHERE staff_id = %s", (name, email, mobile, staff_id, ))
+        conn.commit()
+        db.close_db()
+        return {'message': 'Changes saved'}, 204   
+    except:
+        db.close_db()
+        return {'message': 'Changes could not be saved'}, 500
+
+@applet.route('/staffs/<staff_id>', methods = ['DELETE'])
+@jwt_required()
+def delete_staff_details(staff_id):
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM staff WHERE staff_id = %s", (staff_id, ))
+    conn.commit()
+    db.close_db()
+    return {'message': 'user deleted successfully'}, 204
+
+@applet.route('/staffs', methods = ['POST'])
+@jwt_required()
+def add_staff():
+    conn = db.get_db()
+    cursor = conn.cursor()
+    content = request.get_json(silent=True)
+    try:
+        name = content['name']
+        email = content['email']
+        mobile = content['mobile']
+        staff_id = content['staff_id']
+        password = password = bcrypt.generate_password_hash(content['staff_id']).decode('utf-8')
+    except:
+        return {"message": "Bad Request"}, 400
+    try:
+        cursor.execute("INSERT INTO staff VALUES(%s, %s, %s, %s, %s)", (staff_id, email, name, mobile, password, ))
+        conn.commit()
+        db.close_db()
+    except:
+        db.close_db()
+        return {'message': 'Staff already exists'}, 409 
+    return {'message': 'Staff created successfully'}, 201
+
+@applet.route('/staffs', methods = ['GET'])
+#@jwt_required()
+def get_all_staffs():
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM staff")
+    users = cursor.fetchall()
+    if not users:
+        db.close_db()
+        return {"message": "No users"}, 404
+    response = []
+    for user in users:
+        response.append({'staff_id': user[0], 'email': user[1], 'name': user[2], 'mobile': user[3], 'role': "staff"})
+    db.close_db()
+    return json.dumps(response), 200
+
+#----------------------------------------------------AUTHENTICATION
 @applet.route('/signup', methods=['POST'])
 @jwt_required()
 def signup():
