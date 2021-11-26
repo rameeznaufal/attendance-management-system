@@ -142,7 +142,7 @@ def get_staff(staff_id):
         return {"message": "Staff doesn't exist"}, 404
     response = jsonify({'staff_id': user[0], 'email': user[1], 'name': user[2], 'mobile': user[3]})
     db.close_db()
-    return response, 20
+    return response, 200
 
 @applet.route('/staffs/<staff_id>', methods = ['PUT'])
 @jwt_required()
