@@ -114,7 +114,7 @@ def add_student():
     return {'message': 'Student created successfully'}, 201
 
 @applet.route('/students', methods = ['GET'])
-#@jwt_required()
+@jwt_required()
 def get_all_students():
     conn = db.get_db()
     cursor = conn.cursor()
@@ -199,7 +199,7 @@ def add_staff():
     return {'message': 'Staff created successfully'}, 201
 
 @applet.route('/staffs', methods = ['GET'])
-#@jwt_required()
+@jwt_required()
 def get_all_staffs():
     conn = db.get_db()
     cursor = conn.cursor()
