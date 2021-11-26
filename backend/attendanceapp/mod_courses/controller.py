@@ -61,7 +61,7 @@ def get_course_details(course_id):
 
 @applet.route('/<course_id>', methods = ['DELETE'])
 @jwt_required()
-def get_course_details(course_id):
+def delete_course(course_id):
     
     conn = db.get_db()
     cursor = conn.cursor()
