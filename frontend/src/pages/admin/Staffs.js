@@ -183,7 +183,7 @@ const Staffs = () => {
               ></Input>
             </FormGroup>
             <FormGroup className="text-center pt-1">
-              <Button className="btn btn-dark me-3" style={{ width: 50, height: 40 }} onClick={editStaff}>
+              <Button className="btn btn-dark" style={{ width: 50, height: 40 }} onClick={editStaff}>
                 {editing ? (
                   <Spinner
                   as="span"
