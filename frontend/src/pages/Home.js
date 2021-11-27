@@ -58,7 +58,7 @@ const Home = ({ user, setUser, courses, setCourses }) => {
   if (user && user.role) {
     if (user.role === "admin") return <AdminHome />;
     else if (user.role === "staff") return <StaffHome />;
-    else if (user.role === "student") return <StudentHome courses={courses} setCourses={setCourses} />;
+    else if (user.role === "student") return <StudentHome user={user} courses={courses} setCourses={setCourses} />;
   } else {
     return (
       <div className="pt-4">

@@ -25,15 +25,13 @@ const NavbarTop = ({ user, setUser, courses }) => {
                 {(user.role === "student" || user.role === "staff") &&
                   courses.length !== 0 && (
                     <NavDropdown title="Courses" id="basic-nav-dropdown">
-                      <NavDropdown.Item href="#action/3.1">
-                        Operating System (OS1300D)
-                      </NavDropdown.Item>
-                      <NavDropdown.Item href="#action/3.2">
-                        Database Management System (DB2300D)
-                      </NavDropdown.Item>
-                      <NavDropdown.Item href="#action/3.3">
-                        Theory of Computation (TC3300D)
-                      </NavDropdown.Item>
+                      {courses.map((c) => {
+                        return (
+                          <NavDropdown.Item href={"/courses/" + c.course_id}>
+                            {c.course_name + "(" + c.course_id + ")"}
+                          </NavDropdown.Item>
+                        );
+                      })}
                     </NavDropdown>
                   )}
               </Nav>

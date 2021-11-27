@@ -10,7 +10,7 @@ import {
 import Spinner from "react-bootstrap/Spinner";
 import { useNavigate } from "react-router";
 
-const StudentHome = ({courses, setCourses}) => {
+const StudentHome = ({user, courses, setCourses}) => {
   const [enrolling, setEnrolling] = useState(false);
   const [courseID, setCourseID] = useState("");
   const [invalidEnroll, setInvalidEnroll] = useState("");
@@ -18,13 +18,13 @@ const StudentHome = ({courses, setCourses}) => {
 
   const enrollCourse = async (e) => {
     e.preventDefault();
-    return;
+    // return;
     setEnrolling(true);
     let res = await fetch(
-      process.env.REACT_APP_API_URL + "/user/student/courses/enroll",
+      process.env.REACT_APP_API_URL + "/users/student/" + user.reg_no+ "/courses/" + courseID + "/enroll",
       {
         headers: { "Content-Type": "application/json" },
-        method: "PUT",
+        method: "POST",
         credentials: "include",
         body: JSON.stringify({
           course_id: courseID,
