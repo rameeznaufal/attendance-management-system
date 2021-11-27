@@ -24,6 +24,36 @@ def refresh_expiring_jwts(response):
     except (RuntimeError, KeyError):
         return response
 
+# @applet.route('/students', methods = ['GET'])
+# @jwt_required()
+# def get_all_students_details(reg_no):
+    
+#     conn = db.get_db()
+#     cursor = conn.cursor()
+#     cursor.execute("SELECT * FROM student")
+#     students = cursor.fetchall()
+#     response=[]
+#     for student in students:
+#         response.append({'reg_no':student[0],'email':student[1],'name':student[2],'mobile_no':student[3]})
+#     db.close_db()
+#     return json.dumps(response), 200
+
+@applet.route('/students', methods = ['GET'])
+@jwt_required()
+def get_all_students():
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM student")
+    users = cursor.fetchall()
+    if not users:
+        db.close_db()
+        return {"message": "No users"}, 404
+    response = []
+    for user in users:
+        response.append({'reg_no': user[0], 'email': user[1], 'name': user[2], 'mobile': user[3], 'role': "student"})
+    db.close_db()
+    return json.dumps(response), 200
+
 @applet.route('/student/<reg_no>', methods = ['GET'])
 @jwt_required()
 def get_courses_of_student(reg_no):
@@ -71,6 +101,8 @@ def user_verify():
     if(user):
         return {'email': user[0], 'role': "admin"}
     return {'message': 'user doesnt exist'}, 404
+
+
 
 #----------------------------------------------------------STUDENT
 @applet.route('/students/<reg_no>', methods = ['GET'])
@@ -141,21 +173,7 @@ def add_student():
         return {'message': 'Student already exists'}, 409 
     return {'message': 'Student created successfully'}, 201
 
-@applet.route('/students', methods = ['GET'])
-#@jwt_required()
-def get_all_students():
-    conn = db.get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM student")
-    users = cursor.fetchall()
-    if not users:
-        db.close_db()
-        return {"message": "No users"}, 404
-    response = []
-    for user in users:
-        response.append({'reg_no': user[0], 'email': user[1], 'name': user[2], 'mobile': user[3], 'role': "student"})
-    db.close_db()
-    return json.dumps(response), 200
+
 
 #----------------------------------------------------------- STAFF
 @applet.route('/staffs/<staff_id>', methods = ['GET'])
