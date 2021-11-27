@@ -28,7 +28,8 @@ CREATE TABLE courses_taught (
     staff_id VARCHAR(10),
     course_id VARCHAR(10),
     FOREIGN KEY (staff_id) REFERENCES staff(staff_id) ON DELETE CASCADE,
-    FOREIGN KEY (course_id) REFERENCES course(course_id) ON DELETE CASCADE
+    FOREIGN KEY (course_id) REFERENCES course(course_id) ON DELETE CASCADE,
+    PRIMARY KEY(staff_id, course_id)
 );
 
 CREATE TABLE enrolled (
