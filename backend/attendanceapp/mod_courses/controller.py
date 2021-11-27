@@ -106,6 +106,24 @@ def edit_course_details(course_id):
     return {'message': 'Changes not saved'}, 409
 
 
+@applet.route('/<course_id>/students', methods=['GET'])
+@jwt_required()
+def get_students_in_course(course_id):
+
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT s.reg_no,s.name FROM student s, enrolled e where e.course_id=%s AND s.reg_no=e.reg_no", (course_id,))
+    student_details = cursor.fetchall()
+    if not student_details:
+        return{'message': 'Students not enrolled or Invalid Course ID'}, 404
+
+    response = []
+    for student in student_details:
+        response.append({'reg_no': student[0], 'name': student[1]})
+    db.close_db()
+    return json.dumps(response), 200
+
 @applet.route('/<course_id>', methods=['GET'])
 @jwt_required()
 def get_course_details(course_id):
