@@ -8,6 +8,7 @@ import Staffs from "./pages/admin/Staffs.js";
 import AddStaff from "./pages/admin/AddStaff.js";
 import Courses from "./pages/admin/Courses.js";
 import AddCourse from "./pages/admin/AddCourse.js"
+import { BeatLoader } from "react-spinners";
 
 import NavbarTop from "./components/NavbarTop.js";
 import "./custom.scss";
@@ -21,12 +22,11 @@ function App() {
     await fetch(process.env.REACT_APP_API_URL + "/users/logout", {
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      method: "POST",
     });
   };
 
   useEffect(() => {
-    setLoading(false);
+    setLoading(true);
     (async () => {
       let res = await fetch(process.env.REACT_APP_API_URL + "/users/verify", {
         headers: { "Content-Type": "application/json" },
@@ -38,12 +38,16 @@ function App() {
       } else {
         setUser(null);
       }
-      setLoading(true);
+      setLoading(false);
     })();
   }, []);
 
   return (
-    <div>
+    <div>{loading ?
+      <div className="container text-center mt-5">
+            <BeatLoader loading />
+          </div>
+      :
       <BrowserRouter>
         <NavbarTop user={user} handleLogOut={handleLogOut} />
         <div className="container pt-4">
@@ -73,7 +77,7 @@ function App() {
             />
           </Routes>
         </div>
-      </BrowserRouter>
+      </BrowserRouter>}
     </div>
   );
 }
