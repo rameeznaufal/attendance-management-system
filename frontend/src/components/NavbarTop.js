@@ -28,7 +28,7 @@ const NavbarTop = ({ user, setUser, courses }) => {
                       {courses.map((c) => {
                         return (
                           <NavDropdown.Item href={"/courses/" + c.course_id}>
-                            {c.course_name + "(" + c.course_id + ")"}
+                            {c.course_name + " (" + c.course_id + ")"}
                           </NavDropdown.Item>
                         );
                       })}
