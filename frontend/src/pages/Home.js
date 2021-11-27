@@ -7,7 +7,7 @@ import AdminHome from "./admin/AdminHome.js";
 import StaffHome from "./staff/StaffHome.js";
 import StudentHome from "./student/StudentHome.js";
 
-const Home = ({ user, setUser }) => {
+const Home = ({ user, setUser, courses, setCourses }) => {
   const [regNo, setRegNo] = useState("");
   const [password, setPassword] = useState("");
   const [logging, setLogging] = useState(false);
@@ -34,30 +34,16 @@ const Home = ({ user, setUser }) => {
       }),
     });
     if (res.ok) {
-      let us = await res.json();
-      console.log(us);
-      // res = await fetch(
-      //   process.env.REACT_APP_API_URL + "/users/" + us.id + "/notes",
-      //   {
-      //     headers: { "Content-Type": "application/json" },
-      //     credentials: "include",
-      //   }
-      // );
-      // if (res.ok) {
-      //   res = await res.json();
-      //   res.map((obj) => {
-      //     notes.push({
-      //       server_id: obj[0],
-      //       client_id: uuid(),
-      //       user_id: obj[1],
-      //       title: obj[2],
-      //       note: obj[3],
-      //       last_edited: obj[4],
-      //       tags: obj[5]
-      //     });
-      //   });
-      // }
-      setUser(us);
+      res = await res.json();
+      // if (res.role === "student" || res.role === "staff") {
+        //   let res_course = await fetch(process.env.REACT_APP_API_URL + "/users/" + res.role + "/" + res.reg_no + "/courses", {
+        //     headers: { "Content-Type": "application/json" },
+        //     credentials: "include",
+        //   });
+        //   res_course = await res_course.json();
+        //   setCourses(res_course);
+        // }
+      setUser(res);
     } else {
       if (res.status === 401) {
         setErrorText("Invalid Email or Password");
@@ -72,7 +58,7 @@ const Home = ({ user, setUser }) => {
   if (user && user.role) {
     if (user.role === "admin") return <AdminHome />;
     else if (user.role === "staff") return <StaffHome />;
-    else if (user.role === "student") return <StudentHome />;
+    else if (user.role === "student") return <StudentHome courses={courses} setCourses={setCourses} />;
   } else {
     return (
       <div className="pt-4">

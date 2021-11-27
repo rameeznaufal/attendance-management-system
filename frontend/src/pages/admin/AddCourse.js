@@ -74,7 +74,7 @@ const AddCourse = ({ user }) => {
               ></Input>
             </FormGroup>
             <FormGroup className="text-center pt-1">
-              <Button type="submit" className="btn btn-dark me-3" style={{ width: 100, height: 40 }} >
+              <Button type="submit" className="btn btn-dark" style={{ width: 100, height: 40 }} >
                 {adding ? (
                   <Spinner
                   as="span"

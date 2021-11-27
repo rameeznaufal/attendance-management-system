@@ -226,7 +226,7 @@ const Courses = () => {
               </FormGroup>
               <FormGroup className="text-center pt-1">
                 <Button
-                  className="btn btn-dark me-3"
+                  className="btn btn-dark"
                   style={{ width: 50, height: 40 }}
                   onClick={editCourse}
                 >
