@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { FiSearch, FiUserPlus } from "react-icons/fi";
+import { FiSearch, FiFolderPlus } from "react-icons/fi";
 import { MdDelete, MdEdit } from "react-icons/md";
 import {
   Button,
@@ -21,12 +21,14 @@ const Courses = () => {
   const [course, setCourse] = useState(null);
   const [editing, setEditing] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [staffs, setStaffs] = useState(null);
+  const [staffs, setStaffs] = useState([]);
   const [loading, setLoading] = useState();
+  const [currentStaffs, setCurrentStaffs] = useState([]);
+  const [selectedStaffs, setSelectedStaffs] = useState([]);
+
   const updateValue = (colName, val) => {
     setCourse({ ...course, [colName]: val });
   };
-  const [staffsTeaching, setStaffsTeaching] = useState([]);
 
   const searchCourse = async (e) => {
     e.preventDefault();
@@ -40,16 +42,25 @@ const Courses = () => {
       }
     );
     if (res.ok) {
-      let course = await res.json();
-      console.log(course);
-      setCourse(course);
+      res = await res.json();
+      let i;
+      let currentStaffs_copy = [];
+      for (i in res.staffs) {
+        currentStaffs_copy.push({'value': res.staffs[i]['staff_id'], 'label': res.staffs[i]['staff_name']});
+      }
+      setCurrentStaffs(currentStaffs_copy);
+      setSelectedStaffs(currentStaffs_copy);
+      setCourse(res);
     } else {
+      setCurrentStaffs([]);
       setErrorText(true);
       setCourse(null);
     }
     setSearching(false);
     return;
   };
+
+
 
   const editCourse = async () => {
     setEditing(true);
@@ -59,7 +70,10 @@ const Courses = () => {
         headers: { "Content-Type": "application/json" },
         method: "PUT",
         credentials: "include",
-        body: JSON.stringify(course),
+        body: JSON.stringify({
+          'course_name': course.course_name,
+          'staffs': selectedStaffs
+        }),
       }
     );
     if (res.ok) {
@@ -87,6 +101,10 @@ const Courses = () => {
     setDeleting(false);
     return;
   };
+  const handleStaffChange = (selectedOptions) => {
+    setSelectedStaffs(selectedOptions);
+    return;
+  }
 
   useEffect(() => {
     setLoading(true);
@@ -97,10 +115,15 @@ const Courses = () => {
       });
       if (res.ok) {
         res = await res.json();
-        setStaffs(res);
+        let i;
+        let staffs_copy = [];
+        for (i in res) {
+          staffs_copy.push({'value': res[i]['staff_id'], 'label': res[i]['name']});
+        }
+        setStaffs(staffs_copy);
       } else {
         console.log("Error fetching staffs");
-        setStaffs(null);
+        staffs = [];
       }
       setLoading(false);
     })();
@@ -118,7 +141,7 @@ const Courses = () => {
           </h5>
         </div>
         <Link className="btn btn-primary" to="/courses/add">
-          <FiUserPlus size="25" />
+          <FiFolderPlus size="25" />
         </Link>
       </div>
       {loading ? (
@@ -191,7 +214,15 @@ const Courses = () => {
               </FormGroup>
               <FormGroup>
                 <Label>Staffs</Label>
-                
+                <Select
+                  defaultValue={currentStaffs}
+                  isMulti
+                  name="staffs"
+                  options={staffs}
+                  onChange={handleStaffChange}
+                  className="basic-multi-select"
+                  classNamePrefix="select"
+                />
               </FormGroup>
               <FormGroup className="text-center pt-1">
                 <Button
