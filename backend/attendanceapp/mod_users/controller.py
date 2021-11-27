@@ -54,7 +54,7 @@ def get_all_students():
     db.close_db()
     return json.dumps(response), 200
 
-@applet.route('/student/<reg_no>', methods = ['GET'])
+@applet.route('/student/<reg_no>/courses', methods = ['GET'])
 @jwt_required()
 def get_courses_of_student(reg_no):
     
@@ -68,7 +68,25 @@ def get_courses_of_student(reg_no):
     db.close_db()
     return json.dumps(response), 200
 
-@applet.route('/staff/<staff_id>', methods = ['GET'])
+@applet.route('/student/<reg_no>/courses/<course_id>/enroll', methods = ['POST'])
+@jwt_required()
+def enroll_student_into_course(reg_no,course_id):
+    
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * from enrolled where reg_no=%s AND course_id=%s",(reg_no,course_id,))
+    enrolled=cursor.fetchall()
+    if enrolled:
+        db.close_db()
+        return {"message": "Already enrolled"}, 404
+
+    cursor.execute("INSERT INTO enrolled VALUES (%s,%s)",(reg_no,course_id,))
+    
+    conn.commit()
+    db.close_db()
+    return {"reg_no":reg_no},201
+
+@applet.route('/staff/<staff_id>/courses', methods = ['GET'])
 @jwt_required()
 def get_courses_of_staff(staff_id):
     
