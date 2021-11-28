@@ -5,7 +5,7 @@ from .. import db
 from datetime import datetime, timedelta, timezone
 import json
 
-applet = Blueprint('users', __name__, url_prefix='/api/classes')
+applet = Blueprint('classes', __name__, url_prefix='/api/classes')
 
 
 def myconverter(o):
