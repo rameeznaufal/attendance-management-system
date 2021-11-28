@@ -8,9 +8,10 @@ import Staffs from "./pages/admin/Staffs.js";
 import AddStaff from "./pages/admin/AddStaff.js";
 import Courses from "./pages/admin/Courses.js";
 import AddCourse from "./pages/admin/AddCourse.js";
+import Course from "./pages/Course.js";
+import AddClass from "./pages/staff/AddClass.js";
+import EditClass from "./pages/staff/EditClass.js";
 import { BeatLoader } from "react-spinners";
-import { useNavigate } from "react-router";
-
 import NavbarTop from "./components/NavbarTop.js";
 import "./custom.scss";
 
@@ -18,7 +19,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
   const [courses, setCourses] = useState([]);
-  
+
   useEffect(() => {
     setLoading(true);
     (async () => {
@@ -30,18 +31,26 @@ function App() {
         res = await res.json();
         setUser(res);
         if (res.role === "student" || res.role === "staff") {
-          let res_course = await fetch(process.env.REACT_APP_API_URL + "/users/" + res.role + "/" + res.reg_no + "/courses", {
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-          });
+          let res_course = await fetch(
+            process.env.REACT_APP_API_URL +
+              "/users/" +
+              res.role +
+              "/" +
+              res.reg_no +
+              "/courses",
+            {
+              headers: { "Content-Type": "application/json" },
+              credentials: "include",
+            }
+          );
           res_course = await res_course.json();
           setCourses(res_course);
-          console.log(res_course)
+          setLoading(false);
         }
       } else {
         setUser(null);
+        setLoading(false);
       }
-      setLoading(false);
     })();
   }, []);
 
@@ -59,7 +68,14 @@ function App() {
               <Route
                 path="/"
                 exact
-                element={<Home user={user} setUser={setUser} courses={courses} setCourses={setCourses} />}
+                element={
+                  <Home
+                    user={user}
+                    setUser={setUser}
+                    courses={courses}
+                    setCourses={setCourses}
+                  />
+                }
               />
               <Route
                 path="/students"
@@ -77,12 +93,27 @@ function App() {
                 exact
                 element={<AddStaff user={user} />}
               />
-              <Route path="/courses" exact element={<Courses user={user} />} />
               <Route
                 path="/courses/add"
                 exact
                 element={<AddCourse user={user} />}
               />
+              <Route
+                path="/courses/:id/add"
+                exact
+                element={<AddClass user={user} />}
+              />
+              <Route
+                path="/courses/:id/edit"
+                exact
+                element={<EditClass user={user} />}
+              />
+              <Route
+                path="/courses/:id"
+                exact
+                element={<Course user={user} />}
+              />
+              <Route path="/courses" exact element={<Courses user={user} />} />
             </Routes>
           </div>
         </Router>

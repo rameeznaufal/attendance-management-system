@@ -49,12 +49,15 @@ const Staffs = () => {
 
   const editStaff = async () => {
     setEditing(true);
-    let res = await fetch(process.env.REACT_APP_API_URL + "/users/staffs/" + staff.staff_id, {
-      headers: { "Content-Type": "application/json" },
-      method: "PUT",
-      credentials: "include",
-      body: JSON.stringify(staff),
-    });
+    let res = await fetch(
+      process.env.REACT_APP_API_URL + "/users/staffs/" + staff.staff_id,
+      {
+        headers: { "Content-Type": "application/json" },
+        method: "PUT",
+        credentials: "include",
+        body: JSON.stringify(staff),
+      }
+    );
     if (res.ok) {
     } else {
       console.log("Could not update");
@@ -64,14 +67,17 @@ const Staffs = () => {
   };
   const deleteStaff = async () => {
     setDeleting(true);
-    let res = await fetch(process.env.REACT_APP_API_URL + "/users/staffs/" + staff.staff_id, {
-      headers: { "Content-Type": "application/json" },
-      method: "DELETE",
-      credentials: "include",
-    });
+    let res = await fetch(
+      process.env.REACT_APP_API_URL + "/users/staffs/" + staff.staff_id,
+      {
+        headers: { "Content-Type": "application/json" },
+        method: "DELETE",
+        credentials: "include",
+      }
+    );
     if (res.ok) {
     } else {
-      console.log("Could not delete")
+      console.log("Could not delete");
     }
     setStaff(null);
     setDeleting(false);
@@ -183,30 +189,38 @@ const Staffs = () => {
               ></Input>
             </FormGroup>
             <FormGroup className="text-center pt-1">
-              <Button className="btn btn-dark" style={{ width: 50, height: 40 }} onClick={editStaff}>
+              <Button
+                className="btn btn-dark"
+                style={{ width: 50, height: 40 }}
+                onClick={editStaff}
+              >
                 {editing ? (
                   <Spinner
-                  as="span"
-                  animation="border"
-                  size="sm"
-                  role="status"
-                  aria-hidden="true"
-                />
+                    as="span"
+                    animation="border"
+                    size="sm"
+                    role="status"
+                    aria-hidden="true"
+                  />
                 ) : (
-                <MdEdit size="25" color="white" />
+                  <MdEdit size="25" color="white" />
                 )}
               </Button>
-              <Button className="btn btn-danger" style={{ width: 50, height: 40 }} onClick={deleteStaff}>
+              <Button
+                className="btn btn-danger"
+                style={{ width: 50, height: 40 }}
+                onClick={deleteStaff}
+              >
                 {deleting ? (
                   <Spinner
-                  as="span"
-                  animation="border"
-                  size="sm"
-                  role="status"
-                  aria-hidden="true"
-                />
+                    as="span"
+                    animation="border"
+                    size="sm"
+                    role="status"
+                    aria-hidden="true"
+                  />
                 ) : (
-                <MdDelete size="25" color="white" />
+                  <MdDelete size="25" color="white" />
                 )}
               </Button>
             </FormGroup>

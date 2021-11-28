@@ -10,10 +10,10 @@ import {
 import Spinner from "react-bootstrap/Spinner";
 import { useNavigate } from "react-router";
 
-const StudentHome = ({user, courses, setCourses}) => {
+const StudentHome = ({ user, courses, setCourses }) => {
   const [enrolling, setEnrolling] = useState(false);
   const [courseID, setCourseID] = useState("");
-  const [invalidEnroll, setInvalidEnroll] = useState("");
+  const [invalidEnroll, setInvalidEnroll] = useState(false);
   const navigate = useNavigate();
 
   const enrollCourse = async (e) => {
@@ -21,7 +21,12 @@ const StudentHome = ({user, courses, setCourses}) => {
     // return;
     setEnrolling(true);
     let res = await fetch(
-      process.env.REACT_APP_API_URL + "/users/student/" + user.reg_no+ "/courses/" + courseID + "/enroll",
+      process.env.REACT_APP_API_URL +
+        "/users/student/" +
+        user.reg_no +
+        "/courses/" +
+        courseID +
+        "/enroll",
       {
         headers: { "Content-Type": "application/json" },
         method: "POST",
@@ -32,8 +37,11 @@ const StudentHome = ({user, courses, setCourses}) => {
       }
     );
     if (res.ok) {
-        res = await res.json();
-        setCourses(...courses, {'course_id': courseID, 'course_name': res.course_name});
+      res = await res.json();
+      setCourses(...courses, {
+        course_id: courseID,
+        course_name: res.course_name,
+      });
       navigate("/courses/" + courseID);
     } else {
       setInvalidEnroll(true);

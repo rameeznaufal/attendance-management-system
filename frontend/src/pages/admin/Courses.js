@@ -46,7 +46,10 @@ const Courses = () => {
       let i;
       let currentStaffs_copy = [];
       for (i in res.staffs) {
-        currentStaffs_copy.push({'value': res.staffs[i]['staff_id'], 'label': res.staffs[i]['staff_name']});
+        currentStaffs_copy.push({
+          value: res.staffs[i]["staff_id"],
+          label: res.staffs[i]["staff_name"],
+        });
       }
       setCurrentStaffs(currentStaffs_copy);
       setSelectedStaffs(currentStaffs_copy);
@@ -60,8 +63,6 @@ const Courses = () => {
     return;
   };
 
-
-
   const editCourse = async () => {
     setEditing(true);
     let res = await fetch(
@@ -71,8 +72,8 @@ const Courses = () => {
         method: "PUT",
         credentials: "include",
         body: JSON.stringify({
-          'course_name': course.course_name,
-          'staffs': selectedStaffs
+          course_name: course.course_name,
+          staffs: selectedStaffs,
         }),
       }
     );
@@ -104,7 +105,7 @@ const Courses = () => {
   const handleStaffChange = (selectedOptions) => {
     setSelectedStaffs(selectedOptions);
     return;
-  }
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -118,7 +119,10 @@ const Courses = () => {
         let i;
         let staffs_copy = [];
         for (i in res) {
-          staffs_copy.push({'value': res[i]['staff_id'], 'label': res[i]['name']});
+          staffs_copy.push({
+            value: res[i]["staff_id"],
+            label: res[i]["name"],
+          });
         }
         setStaffs(staffs_copy);
       } else {

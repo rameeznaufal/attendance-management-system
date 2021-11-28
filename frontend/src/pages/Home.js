@@ -35,6 +35,7 @@ const Home = ({ user, setUser, courses, setCourses }) => {
     });
     if (res.ok) {
       res = await res.json();
+      setUser(res);
       if (res.role === "student" || res.role === "staff") {
           let res_course = await fetch(process.env.REACT_APP_API_URL + "/users/" + res.role + "/" + res.reg_no + "/courses", {
             headers: { "Content-Type": "application/json" },
@@ -43,7 +44,6 @@ const Home = ({ user, setUser, courses, setCourses }) => {
           res_course = await res_course.json();
           setCourses(res_course);
         }
-      setUser(res);
     } else {
       if (res.status === 401) {
         setErrorText("Invalid Email or Password");
