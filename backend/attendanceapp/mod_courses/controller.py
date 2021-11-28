@@ -56,8 +56,8 @@ def add_course():
     except:
         return {"message": "Bad Request"}, 400
 
-    cursor.execute("insert into course values (%s,%s)",
-                   (course_id, course_name,))
+    cursor.execute("insert into course values (%s,%s)",(course_id, course_name,))
+    cursor.execute("create sequence %s start 1 increment 1",(course_id,))
     conn.commit()
     db.close_db()
     return {'message': 'Course added'}, 201
