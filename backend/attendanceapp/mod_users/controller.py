@@ -192,6 +192,24 @@ def add_student():
     return {'message': 'Student created successfully'}, 201
 
 
+@applet.route('/students', methods = ['GET'])
+@jwt_required()
+def get_all_students():
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM student")
+    users = cursor.fetchall()
+    if not users:
+        db.close_db()
+        return {"message": "No users"}, 404
+    response = []
+    for user in users:
+        response.append({'reg_no': user[0], 'email': user[1], 'name': user[2], 'mobile': user[3], 'role': "student"})
+    db.close_db()
+    return json.dumps(response), 200
+
+
+
 
 #----------------------------------------------------------- STAFF
 @applet.route('/staffs/<staff_id>', methods = ['GET'])
@@ -263,7 +281,7 @@ def add_staff():
     return {'message': 'Staff created successfully'}, 201
 
 @applet.route('/staffs', methods = ['GET'])
-#@jwt_required()
+@jwt_required()
 def get_all_staffs():
     conn = db.get_db()
     cursor = conn.cursor()
