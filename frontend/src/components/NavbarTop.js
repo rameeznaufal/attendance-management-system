@@ -1,6 +1,8 @@
 import React from "react";
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { useNavigate } from "react-router";
+import { Link } from "react-router-dom";
+
 const NavbarTop = ({ user, setUser, courses }) => {
   const navigate = useNavigate();
 
@@ -16,7 +18,7 @@ const NavbarTop = ({ user, setUser, courses }) => {
   return (
     <Navbar bg="dark" variant="dark" expand="md">
       <div className="container">
-        <Navbar.Brand href="/">Attendance Management System</Navbar.Brand>
+        <Navbar.Brand><Link to="/" style={{"textDecoration": "none", "color": "white"}}>Attendance Management System</Link></Navbar.Brand>
         {user && (
           <>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -27,8 +29,10 @@ const NavbarTop = ({ user, setUser, courses }) => {
                     <NavDropdown title="Courses" id="basic-nav-dropdown">
                       {courses.map((c) => {
                         return (
-                          <NavDropdown.Item href={"/courses/" + c.course_id}>
-                            {c.course_name + " (" + c.course_id + ")"}
+                          <NavDropdown.Item>
+                            <Link key={c.course_id} to={"/courses/" + c.course_id} style={{"textDecoration": "none", "color": "black"}}>
+                              {c.course_name + " (" + c.course_id + ")"}
+                            </Link>
                           </NavDropdown.Item>
                         );
                       })}
