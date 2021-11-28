@@ -24,6 +24,82 @@ def refresh_expiring_jwts(response):
     except (RuntimeError, KeyError):
         return response
 
+# @applet.route('/students', methods = ['GET'])
+# @jwt_required()
+# def get_all_students_details(reg_no):
+    
+#     conn = db.get_db()
+#     cursor = conn.cursor()
+#     cursor.execute("SELECT * FROM student")
+#     students = cursor.fetchall()
+#     response=[]
+#     for student in students:
+#         response.append({'reg_no':student[0],'email':student[1],'name':student[2],'mobile_no':student[3]})
+#     db.close_db()
+#     return json.dumps(response), 200
+
+@applet.route('/students', methods = ['GET'])
+@jwt_required()
+def get_all_students():
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM student")
+    users = cursor.fetchall()
+    if not users:
+        db.close_db()
+        return {"message": "No users"}, 404
+    response = []
+    for user in users:
+        response.append({'reg_no': user[0], 'email': user[1], 'name': user[2], 'mobile': user[3], 'role': "student"})
+    db.close_db()
+    return json.dumps(response), 200
+
+@applet.route('/student/<reg_no>/courses', methods = ['GET'])
+@jwt_required()
+def get_courses_of_student(reg_no):
+    
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT c.course_id, c.course_name FROM enrolled e, course c where e.reg_no=%s AND e.course_id=c.course_id",(reg_no,))
+    courses = cursor.fetchall()
+    response=[]
+    for course in courses:
+        response.append({'course_id':course[0],'course_name':course[1]})
+    db.close_db()
+    return json.dumps(response), 200
+
+@applet.route('/student/<reg_no>/courses/<course_id>/enroll', methods = ['POST'])
+@jwt_required()
+def enroll_student_into_course(reg_no,course_id):
+    
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * from enrolled where reg_no=%s AND course_id=%s",(reg_no,course_id,))
+    enrolled=cursor.fetchall()
+    if enrolled:
+        db.close_db()
+        return {"message": "Already enrolled"}, 404
+
+    cursor.execute("INSERT INTO enrolled VALUES (%s,%s)",(reg_no,course_id,))
+    
+    conn.commit()
+    db.close_db()
+    return {"reg_no":reg_no},201
+
+@applet.route('/staff/<staff_id>/courses', methods = ['GET'])
+@jwt_required()
+def get_courses_of_staff(staff_id):
+    
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT c.course_id, c.course_name FROM courses_taught s, course c where s.staff_id=%s AND s.course_id=c.course_id",(staff_id,))
+    courses = cursor.fetchall()
+    response=[]
+    for course in courses:
+        response.append({'course_id':course[0],'course_name':course[1]})
+    db.close_db()
+    return json.dumps(response), 200
+
 @applet.route('/verify', methods = ['GET'])
 @jwt_required()
 def user_verify():
@@ -43,6 +119,8 @@ def user_verify():
     if(user):
         return {'email': user[0], 'role': "admin"}
     return {'message': 'user doesnt exist'}, 404
+
+
 
 #----------------------------------------------------------STUDENT
 @applet.route('/students/<reg_no>', methods = ['GET'])
@@ -113,6 +191,7 @@ def add_student():
         return {'message': 'Student already exists'}, 409 
     return {'message': 'Student created successfully'}, 201
 
+
 @applet.route('/students', methods = ['GET'])
 @jwt_required()
 def get_all_students():
@@ -128,6 +207,9 @@ def get_all_students():
         response.append({'reg_no': user[0], 'email': user[1], 'name': user[2], 'mobile': user[3], 'role': "student"})
     db.close_db()
     return json.dumps(response), 200
+
+
+
 
 #----------------------------------------------------------- STAFF
 @applet.route('/staffs/<staff_id>', methods = ['GET'])
