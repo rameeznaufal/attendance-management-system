@@ -18,21 +18,19 @@ const AddClass = ({ user }) => {
   const addClass = async (e) => {
     e.preventDefault();
     setAdding(true);
-    let res = await fetch(
-      process.env.REACT_APP_API_URL + "/classes/" + courseID + "/add",
-      {
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        method: "POST",
-        body: {
-          course_id: courseID,
-          class_date: classDate + " 00:00:00",
-          slot_id: slot,
-        },
-      }
-    );
+    let res = await fetch(process.env.REACT_APP_API_URL + "/classes/add", {
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      method: "POST",
+      body: JSON.stringify({
+        course_id: courseID,
+        class_date: classDate + " 00:00:00",
+        slot_id: slot,
+      }),
+    });
     if (res.ok) {
-      console.log("Added class");
+      navigate("/courses/" + courseID);
+      return;
     } else {
       console.log("Error Adding Class");
     }

@@ -51,19 +51,13 @@ const Course = ({ user }) => {
         classes[c].class_date.slice(0, 10) + " " + classes[c].start_time
       );
       if (curr_date < start_date) {
-        console.log("upcoming");
         setUpcomingClasses((prevValue) => [...prevValue, classes[c]]);
       } else if (curr_date - start_date > diff) {
-        console.log("previous");
         setPreviousClasses((prevValue) => [...prevValue, classes[c]]);
       } else {
-        console.log("ongoing");
         setOngoingClasses((prevValue) => [...prevValue, classes[c]]);
       }
     }
-    console.log(upcomingClasses.length);
-    console.log(previousClasses.length);
-    console.log(ongoingClasses.length);
     setLoading(false);
   };
 
@@ -74,6 +68,7 @@ const Course = ({ user }) => {
     setPreviousClasses((prevValue) => []);
     if (!user || (user.role !== "student" && user.role !== "staff")) {
       navigate("/");
+      console.log("222");
       return;
     }
     setCourseID(cid);
@@ -121,6 +116,7 @@ const Course = ({ user }) => {
   };
 
   const displayTime = (t1, t2) => {
+    console.log("here");
     return getAMPM(t1) + " - " + getAMPM(t2);
   };
 
@@ -136,7 +132,11 @@ const Course = ({ user }) => {
             <h2>
               {course.course_name} ({course.course_id})
             </h2>
-            <p>Teacher(s): {course && staffsString(course.staffs)}</p>
+            <p>
+              Teacher
+              {course && course.staffs && course.staffs.length > 1 && "s"}:{" "}
+              {course && staffsString(course.staffs)}
+            </p>
             <hr></hr>
             {user && user.role === "staff" && (
               <div>
@@ -158,26 +158,18 @@ const Course = ({ user }) => {
               </div>
             )}
             {ongoingClasses.length > 0 && (
-              <div>
+              <div className="">
                 <h6>ONGOING CLASSES</h6>
-                {ongoingClasses.map((e) => {
-                  return <p>{e.class_id}</p>;
-                })}
-              </div>
-            )}
-            {upcomingClasses.length > 0 && (
-              <div className="mb-3">
-                <h6>UPCOMING CLASSES</h6>
                 <table class="table">
                   <thead>
                     <tr>
                       <th scope="col">Class</th>
                       <th scope="col">Slot</th>
-                      {user.role === "staff" && <th scope="col"></th>}
+                      {user && user.role === "staff" && <th scope="col"></th>}
                     </tr>
                   </thead>
                   <tbody>
-                    {upcomingClasses.map((c) => {
+                    {ongoingClasses.map((c) => {
                       return (
                         <tr className="align-items-center">
                           <td>{c.class_id}</td>
@@ -202,7 +194,11 @@ const Course = ({ user }) => {
                             ) : (
                               <Link
                                 to={
-                                  "/courses/" + cid + "/classes/" + c.class_id
+                                  "/courses/" +
+                                  cid +
+                                  "/classes/" +
+                                  c.class_id +
+                                  "/mark"
                                 }
                               >
                                 Mark Attendance
@@ -216,13 +212,96 @@ const Course = ({ user }) => {
                 </table>
               </div>
             )}
+            {upcomingClasses.length > 0 && (
+              <div className="mt-4">
+                <h6>UPCOMING CLASSES</h6>
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Class</th>
+                      <th scope="col">Slot</th>
+                      {user && user.role === "staff" && <th scope="col"></th>}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {upcomingClasses.map((c) => {
+                      return (
+                        <tr className="align-items-center">
+                          <td>{c.class_id}</td>
+                          <td>
+                            {String.fromCharCode(64 + c.slot_id) +
+                              " (" +
+                              displayTime(
+                                new Date("2021-05-31 " + c.start_time),
+                                new Date("2021-05-31 " + c.end_time)
+                              ) +
+                              ")"}
+                          </td>
+                          <td>
+                            {user.role === "staff" && (
+                              <Link
+                                to={
+                                  "/courses/" + cid + "/classes/" + c.class_id
+                                }
+                              >
+                                Edit
+                              </Link>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
             {previousClasses.length > 0 && (
-              <div>
-                <hr></hr>
+              <div className="mt-4">
                 <h6>PREVIOUS CLASSES</h6>
-                {previousClasses.map((e) => {
-                  return <p>{e.class_id}</p>;
-                })}
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Class</th>
+                      <th scope="col">Slot</th>
+                      {user && user.role === "staff" ? (
+                        <th scope="col"></th>
+                      ) : (
+                        <th scope="col">Status</th>
+                      )}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {previousClasses.map((c) => {
+                      return (
+                        <tr className="align-items-center">
+                          <td>{c.class_id}</td>
+                          <td>
+                            {String.fromCharCode(64 + c.slot_id) +
+                              " (" +
+                              displayTime(
+                                new Date("2021-05-31 " + c.start_time),
+                                new Date("2021-05-31 " + c.end_time)
+                              ) +
+                              ")"}
+                          </td>
+                          <td>
+                            {user.role === "staff" ? (
+                              <Link
+                                to={
+                                  "/courses/" + cid + "/classes/" + c.class_id
+                                }
+                              >
+                                Edit
+                              </Link>
+                            ) : (
+                              <>Status</>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
               </div>
             )}
           </div>
