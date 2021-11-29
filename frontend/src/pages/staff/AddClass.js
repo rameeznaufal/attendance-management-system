@@ -3,11 +3,9 @@ import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { Button, Form, FormGroup, Input, Label } from "reactstrap";
 import Spinner from "react-bootstrap/Spinner";
-import Select from "react-select";
-import { BeatLoader, ClimbingBoxLoader } from "react-spinners";
+import { BeatLoader } from "react-spinners";
 
 const AddClass = ({ user }) => {
-  const [course, setCourse] = useState(null);
   const [classDate, setClassDate] = useState(
     new Date().toISOString().slice(0, 10)
   );
@@ -20,25 +18,38 @@ const AddClass = ({ user }) => {
   const addClass = async (e) => {
     e.preventDefault();
     setAdding(true);
-
+    let res = await fetch(process.env.REACT_APP_API_URL + "/classes/add", {
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      method: "POST",
+      body: JSON.stringify({
+        course_id: courseID,
+        class_date: classDate + " 00:00:00",
+        slot_id: slot,
+      }),
+    });
+    if (res.ok) {
+      navigate("/courses/" + courseID);
+      return;
+    } else {
+      console.log("Error Adding Class");
+    }
     setAdding(false);
     return;
   };
 
   useEffect(() => {
-    console.log(user);
     setLoading(true);
     if (!user || user.role !== "staff") {
       navigate("/");
       return;
     }
-    console.log("here");
     var array = window.location.href.split("/");
     setCourseID(array[array.length - 2]);
 
     (async () => {
       let res = await fetch(
-        process.env.REACT_APP_API_URL + "/courses/" + courseID,
+        process.env.REACT_APP_API_URL + "/courses/" + array[array.length - 2],
         {
           headers: { "Content-Type": "application/json" },
           method: "GET",
@@ -46,8 +57,6 @@ const AddClass = ({ user }) => {
         }
       );
       if (res.ok) {
-        res = await res.json();
-        setCourse(res);
         setLoading(false);
       } else {
         navigate("/");
@@ -62,7 +71,7 @@ const AddClass = ({ user }) => {
       <div className="d-flex justify-content-between align-items-center mb-3">
         <div>
           <h5>
-            <Link className="" to="">
+            <Link className="" to={"/courses/" + courseID}>
               {courseID}
             </Link>{" "}
             &#62; Add Class
@@ -91,7 +100,13 @@ const AddClass = ({ user }) => {
             </FormGroup>
             <FormGroup>
               <Label>Slot</Label>
-              <select class="form-select" aria-label="Slot selection">
+              <select
+                class="form-select"
+                aria-label="Slot selection"
+                onChange={(e) => {
+                  setSlot(e.target.value);
+                }}
+              >
                 <option selected value="1">
                   A (8 AM - 9 AM)
                 </option>
