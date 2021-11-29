@@ -12,7 +12,6 @@ import Course from "./pages/Course.js";
 import AddClass from "./pages/staff/AddClass.js";
 import EditClass from "./pages/staff/EditClass.js";
 import MarkAttendance from "./pages/student/MarkAttendance.js";
-import CourseStudents from "./pages/staff/CourseStudents.js";
 import AttendanceStat from "./pages/AttendanceStat.js";
 import StudentsEnrolled from "./pages/staff/StudentsEnrolled.js";
 import { BeatLoader } from "react-spinners";

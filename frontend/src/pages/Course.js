@@ -11,6 +11,8 @@ const Course = ({ user }) => {
   const [courseID, setCourseID] = useState("");
   const [loading, setLoading] = useState(true);
 
+  const statusArray = ["Absent", "Present", "Late"];
+
   var array = window.location.href.split("/");
   var cid = array[array.length - 1];
 
@@ -78,13 +80,14 @@ const Course = ({ user }) => {
       if (res.ok) {
         res = await res.json();
         setCourse(res);
-        let res2 = await fetch(
-          process.env.REACT_APP_API_URL + "/courses/" + cid + "/classes",
-          {
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-          }
-        );
+        var apiString =
+          process.env.REACT_APP_API_URL + "/courses/" + cid + "/classes";
+        if (user.role === "student")
+          apiString = apiString + "/student/" + user.reg_no;
+        let res2 = await fetch(apiString, {
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+        });
         if (res2.ok) {
           res2 = await res2.json();
           sortClasses(res2);
@@ -216,7 +219,7 @@ const Course = ({ user }) => {
                               >
                                 Edit
                               </Link>
-                            ) : (
+                            ) : c.status === 0 ? (
                               <Link
                                 to={
                                   "/courses/" +
@@ -226,8 +229,10 @@ const Course = ({ user }) => {
                                   "/edit"
                                 }
                               >
-                                Mark Attendance
+                                "Mark Attendance"
                               </Link>
+                            ) : (
+                              statusArray[c.status]
                             )}
                           </td>
                         </tr>
@@ -327,7 +332,7 @@ const Course = ({ user }) => {
                                 Edit
                               </Link>
                             ) : (
-                              <>Status</>
+                              <>{statusArray[c.status]}</>
                             )}
                           </td>
                         </tr>
