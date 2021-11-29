@@ -38,10 +38,14 @@ const StudentHome = ({ user, courses, setCourses }) => {
     );
     if (res.ok) {
       res = await res.json();
-      setCourses(...courses, {
-        course_id: courseID,
-        course_name: res.course_name,
-      });
+      console.log(res);
+      setCourses((prevValue) => [
+        ...prevValue,
+        {
+          course_id: courseID,
+          course_name: res.course_name,
+        },
+      ]);
       navigate("/courses/" + courseID);
     } else {
       setInvalidEnroll(true);
