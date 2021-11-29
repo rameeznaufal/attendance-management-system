@@ -124,6 +124,22 @@ def get_students_in_course(course_id):
     db.close_db()
     return json.dumps(response), 200
 
+@applet.route('/<course_id>/classes', methods=['GET'])
+@jwt_required()
+def get_classes_in_course(course_id):
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT c.class_id, c.course_id, c.class_date, c.slot_id, s.start_time, s.end_time FROM class c JOIN slot s ON c.slot_id = s.slot_id WHERE c.course_id=%s ORDER BY c.class_id DESC", (course_id,))
+    class_details = cursor.fetchall()
+    if not class_details:
+        return{'message': 'No classes added or Invalid Course ID'}, 404
+    response = []
+    for class_ in class_details:
+        response.append({'class_id': class_[0], 'class_date': class_[2], 'slot_id': class_[3], 'start_time': str(class_[4]), 'end_time': str(class_[5])})
+    db.close_db()
+    return json.dumps(response, default=myconverter), 200
+
 @applet.route('/<course_id>', methods=['GET'])
 @jwt_required()
 def get_course_details(course_id):
