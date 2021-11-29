@@ -86,6 +86,16 @@ def edit_class_details(class_id,course_id):
     db.close_db()
     return {'message': 'Class details edited'}, 200
 
+@applet.route('/<class_id>/course/<course_id>', methods=['GET'])
+@jwt_required()
+def get_class_details(class_id,course_id):
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute("select slot_id, class_date from class where class_id=%s and course_id=%s",( class_id, course_id,))
+    class_ = cursor.fetchone()
+    db.close_db()
+    return {'slot_id': class_[0], 'class_date': class_[1]}, 200
+
 @applet.route('/<class_id>/course/<course_id>', methods=['DELETE'])
 @jwt_required()
 def delete_class(class_id,course_id):

@@ -111,7 +111,7 @@ function App() {
                 element={<AddClass user={user} />}
               />
               <Route
-                path="/courses/:id/edit/:id"
+                path="/courses/:cid/classes/:classid/edit"
                 exact
                 element={<EditClass user={user} />}
               />

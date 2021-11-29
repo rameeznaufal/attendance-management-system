@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { renderMatches, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { BeatLoader } from "react-spinners";
-import { AiOutlineEdit } from "react-icons/ai";
 const Course = ({ user }) => {
   const navigate = useNavigate();
   const [course, setCourse] = useState(null);
@@ -68,7 +67,6 @@ const Course = ({ user }) => {
     setPreviousClasses((prevValue) => []);
     if (!user || (user.role !== "student" && user.role !== "staff")) {
       navigate("/");
-      console.log("222");
       return;
     }
     setCourseID(cid);
@@ -89,7 +87,6 @@ const Course = ({ user }) => {
         );
         if (res2.ok) {
           res2 = await res2.json();
-          console.log(res2);
           sortClasses(res2);
         } else {
           console.log("error loading classes");
@@ -115,9 +112,37 @@ const Course = ({ user }) => {
     return strTime;
   };
 
-  const displayTime = (t1, t2) => {
-    console.log("here");
-    return getAMPM(t1) + " - " + getAMPM(t2);
+  const displayDate = (d) => {
+    d = new Date(d);
+    return d.toLocaleDateString("en-us", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+  const displayTime = (d, t1, t2) => {
+    var d = new Date(d);
+    var st = new Date(
+      d.getFullYear() +
+        "-" +
+        (d.getMonth() + 1) +
+        "-" +
+        d.getDate() +
+        " " +
+        t1 +
+        " UTC"
+    );
+    var et = new Date(
+      d.getFullYear() +
+        "-" +
+        (d.getMonth() + 1) +
+        "-" +
+        d.getDate() +
+        " " +
+        t2 +
+        " UTC"
+    );
+    return getAMPM(st) + " - " + getAMPM(et);
   };
 
   return (
@@ -164,7 +189,7 @@ const Course = ({ user }) => {
                   <thead>
                     <tr>
                       <th scope="col">Class</th>
-                      <th scope="col">Slot</th>
+                      <th scope="col">Date &#38; Time</th>
                       {user && user.role === "staff" && <th scope="col"></th>}
                     </tr>
                   </thead>
@@ -174,13 +199,13 @@ const Course = ({ user }) => {
                         <tr className="align-items-center">
                           <td>{c.class_id}</td>
                           <td>
-                            {String.fromCharCode(64 + c.slot_id) +
-                              " (" +
-                              displayTime(
-                                new Date("2021-05-31 " + c.start_time),
-                                new Date("2021-05-31 " + c.end_time)
-                              ) +
-                              ")"}
+                            {displayDate(c.class_date)}
+                            <br></br>
+                            {displayTime(
+                              c.class_date,
+                              c.start_time,
+                              c.end_time
+                            )}
                           </td>
                           <td>
                             {user.role === "staff" ? (
@@ -198,7 +223,7 @@ const Course = ({ user }) => {
                                   cid +
                                   "/classes/" +
                                   c.class_id +
-                                  "/mark"
+                                  "/edit"
                                 }
                               >
                                 Mark Attendance
@@ -219,7 +244,7 @@ const Course = ({ user }) => {
                   <thead>
                     <tr>
                       <th scope="col">Class</th>
-                      <th scope="col">Slot</th>
+                      <th scope="col">Date &#38; Time</th>
                       {user && user.role === "staff" && <th scope="col"></th>}
                     </tr>
                   </thead>
@@ -229,19 +254,23 @@ const Course = ({ user }) => {
                         <tr className="align-items-center">
                           <td>{c.class_id}</td>
                           <td>
-                            {String.fromCharCode(64 + c.slot_id) +
-                              " (" +
-                              displayTime(
-                                new Date("2021-05-31 " + c.start_time),
-                                new Date("2021-05-31 " + c.end_time)
-                              ) +
-                              ")"}
+                            {displayDate(c.class_date)}
+                            <br></br>
+                            {displayTime(
+                              c.class_date,
+                              c.start_time,
+                              c.end_time
+                            )}
                           </td>
                           <td>
                             {user.role === "staff" && (
                               <Link
                                 to={
-                                  "/courses/" + cid + "/classes/" + c.class_id
+                                  "/courses/" +
+                                  cid +
+                                  "/classes/" +
+                                  c.class_id +
+                                  "/edit"
                                 }
                               >
                                 Edit
@@ -262,7 +291,7 @@ const Course = ({ user }) => {
                   <thead>
                     <tr>
                       <th scope="col">Class</th>
-                      <th scope="col">Slot</th>
+                      <th scope="col">Date &#38; Time</th>
                       {user && user.role === "staff" ? (
                         <th scope="col"></th>
                       ) : (
@@ -276,19 +305,23 @@ const Course = ({ user }) => {
                         <tr className="align-items-center">
                           <td>{c.class_id}</td>
                           <td>
-                            {String.fromCharCode(64 + c.slot_id) +
-                              " (" +
-                              displayTime(
-                                new Date("2021-05-31 " + c.start_time),
-                                new Date("2021-05-31 " + c.end_time)
-                              ) +
-                              ")"}
+                            {displayDate(c.class_date)}
+                            <br></br>
+                            {displayTime(
+                              c.class_date,
+                              c.start_time,
+                              c.end_time
+                            )}
                           </td>
                           <td>
                             {user.role === "staff" ? (
                               <Link
                                 to={
-                                  "/courses/" + cid + "/classes/" + c.class_id
+                                  "/courses/" +
+                                  cid +
+                                  "/classes/" +
+                                  c.class_id +
+                                  "/edit"
                                 }
                               >
                                 Edit
