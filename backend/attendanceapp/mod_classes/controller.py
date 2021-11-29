@@ -40,7 +40,20 @@ def add_class():
     except:
         return {"message": "Bad Request"}, 400
 
-    cursor.execute("insert into class values (nextval(%s),%s,%s,%s)",(course_id,course_id, class_date,slot_id,))
+    cursor.execute("select nextval(%s)",(course_id,))
+    class_id=cursor.fetchone()
+    print(class_id[0])
+    cursor.execute("insert into class values (%s,%s,%s,%s)",(class_id,course_id,class_date,slot_id,))
+    cursor.execute("select * from enrolled where course_id=%s",(course_id,))
+    students_list=cursor.fetchall()
+    if (students_list):
+        student_ins=[]
+        for student in students_list:
+            student_ins.append(tuple([student[0],class_id[0],course_id,0]))
+        student_ins=str(tuple(student_ins))[1:-1]
+        if len(students_list)==1:
+            student_ins=student_ins[:-1]
+        cursor.execute("insert into attendance values "+ student_ins )
     conn.commit()
     db.close_db()
     return {'message': 'Class added'}, 201
