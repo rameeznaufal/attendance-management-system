@@ -18,7 +18,11 @@ const NavbarTop = ({ user, setUser, courses }) => {
   return (
     <Navbar bg="dark" variant="dark" expand="md">
       <div className="container">
-        <Navbar.Brand><Link to="/" style={{"textDecoration": "none", "color": "white"}}>Attendance Management System</Link></Navbar.Brand>
+        <Navbar.Brand>
+          <Link to="/" style={{ textDecoration: "none", color: "white" }}>
+            Attendance Management System
+          </Link>
+        </Navbar.Brand>
         {user && (
           <>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -27,15 +31,23 @@ const NavbarTop = ({ user, setUser, courses }) => {
                 {(user.role === "student" || user.role === "staff") &&
                   courses.length !== 0 && (
                     <NavDropdown title="Courses" id="basic-nav-dropdown">
-                      {courses.map((c) => {
-                        return (
-                          <NavDropdown.Item>
-                            <Link key={c.course_id} to={"/courses/" + c.course_id} style={{"textDecoration": "none", "color": "black"}}>
-                              {c.course_name + " (" + c.course_id + ")"}
-                            </Link>
-                          </NavDropdown.Item>
-                        );
-                      })}
+                      {courses &&
+                        courses.map((c) => {
+                          return (
+                            <NavDropdown.Item>
+                              <Link
+                                key={c.course_id}
+                                to={"/courses/" + c.course_id}
+                                style={{
+                                  textDecoration: "none",
+                                  color: "black",
+                                }}
+                              >
+                                {c.course_name + " (" + c.course_id + ")"}
+                              </Link>
+                            </NavDropdown.Item>
+                          );
+                        })}
                     </NavDropdown>
                   )}
               </Nav>

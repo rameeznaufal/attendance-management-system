@@ -101,7 +101,6 @@ const MarkAttendance = ({ user }) => {
             ":" +
             utcSeconds
         );
-        // curr_date = new Date("2021-11-29 05:52:01");
         var diff60 = 3600000; // 60 minutes
         var diff5 = 300000; //5 minutes
         var start_date = new Date(

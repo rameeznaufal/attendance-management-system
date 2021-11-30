@@ -12,7 +12,8 @@ import Course from "./pages/Course.js";
 import AddClass from "./pages/staff/AddClass.js";
 import EditClass from "./pages/staff/EditClass.js";
 import MarkAttendance from "./pages/student/MarkAttendance.js";
-import CourseStudents from "./pages/staff/CourseStudents.js";
+import AttendanceStat from "./pages/AttendanceStat.js";
+import StudentsEnrolled from "./pages/staff/StudentsEnrolled.js";
 import { BeatLoader } from "react-spinners";
 import NavbarTop from "./components/NavbarTop.js";
 import "./custom.scss";
@@ -111,14 +112,19 @@ function App() {
                 element={<AddClass user={user} />}
               />
               <Route
-                path="/courses/:id/edit/:id"
-                exact
-                element={<EditClass user={user} />}
-              />
-              <Route
                 path="/courses/:id/students"
                 exact
-                element={<CourseStudents user={user} />}
+                element={<StudentsEnrolled user={user} />}
+              />
+              <Route
+                path="/courses/:id/students/:reg_no"
+                exact
+                element={<AttendanceStat user={user} />}
+              />
+              <Route
+                path="/courses/:cid/classes/:classid/edit"
+                exact
+                element={<EditClass user={user} />}
               />
               <Route
                 path="/courses/:id"
