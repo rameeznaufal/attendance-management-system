@@ -20,7 +20,8 @@
     "react-uuid": "^1.0.2",
     "reactstrap": "^9.0.1",
     "sass": "^1.43.4",
-    "web-vitals": "^2.1.2"
+    "web-vitals": "^2.1.2",
+    "yarn": "^1.22.17"
   },
   "scripts": {
     "start": "react-scripts start",
