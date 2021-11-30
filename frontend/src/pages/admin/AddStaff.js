@@ -1,13 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  Button,
-  Form,
-  FormGroup,
-  Input,
-  FormFeedback,
-  Label,
-} from "reactstrap";
+import { Button, Form, FormGroup, Input, Label } from "reactstrap";
 import Spinner from "react-bootstrap/Spinner";
 
 const AddStaff = ({ user }) => {

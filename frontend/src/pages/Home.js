@@ -37,13 +37,21 @@ const Home = ({ user, setUser, courses, setCourses }) => {
       res = await res.json();
       setUser(res);
       if (res.role === "student" || res.role === "staff") {
-          let res_course = await fetch(process.env.REACT_APP_API_URL + "/users/" + res.role + "/" + res.reg_no + "/courses", {
+        let res_course = await fetch(
+          process.env.REACT_APP_API_URL +
+            "/users/" +
+            res.role +
+            "/" +
+            res.reg_no +
+            "/courses",
+          {
             headers: { "Content-Type": "application/json" },
             credentials: "include",
-          });
-          res_course = await res_course.json();
-          setCourses(res_course);
-        }
+          }
+        );
+        res_course = await res_course.json();
+        setCourses(res_course);
+      }
     } else {
       if (res.status === 401) {
         setErrorText("Invalid Email or Password");
@@ -58,7 +66,10 @@ const Home = ({ user, setUser, courses, setCourses }) => {
   if (user && user.role) {
     if (user.role === "admin") return <AdminHome />;
     else if (user.role === "staff") return <StaffHome />;
-    else if (user.role === "student") return <StudentHome user={user} courses={courses} setCourses={setCourses} />;
+    else if (user.role === "student")
+      return (
+        <StudentHome user={user} courses={courses} setCourses={setCourses} />
+      );
   } else {
     return (
       <div className="pt-4">
