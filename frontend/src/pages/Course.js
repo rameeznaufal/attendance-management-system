@@ -148,6 +148,11 @@ const Course = ({ user }) => {
     return getAMPM(st) + " - " + getAMPM(et);
   };
 
+  const goToClass = (class_id) =>{
+    navigate("/courses/"+cid+"/classes/"+class_id);
+    return;
+  }
+
   return (
     <div>
       {loading ? (
@@ -199,7 +204,7 @@ const Course = ({ user }) => {
                   <tbody>
                     {ongoingClasses.map((c) => {
                       return (
-                        <tr className="align-items-center">
+                        <tr className="align-items-center" onClick={() => goToClass(c.class_id)}>
                           <td>{c.class_id}</td>
                           <td>
                             {displayDate(c.class_date)}
@@ -211,7 +216,7 @@ const Course = ({ user }) => {
                             )}
                           </td>
                           <td>
-                            {user.role === "staff" ? (
+                            {user && user.role === "staff" ? (
                               <Link
                                 to={
                                   "/courses/" + cid + "/classes/" + c.class_id
@@ -268,7 +273,7 @@ const Course = ({ user }) => {
                             )}
                           </td>
                           <td>
-                            {user.role === "staff" && (
+                            {user && user.role === "staff" && (
                               <Link
                                 to={
                                   "/courses/" +
@@ -307,7 +312,7 @@ const Course = ({ user }) => {
                   <tbody>
                     {previousClasses.map((c) => {
                       return (
-                        <tr className="align-items-center">
+                        <tr className="align-items-center" onClick={() => goToClass(c.class_id)}>
                           <td>{c.class_id}</td>
                           <td>
                             {displayDate(c.class_date)}
@@ -319,7 +324,7 @@ const Course = ({ user }) => {
                             )}
                           </td>
                           <td>
-                            {user.role === "staff" ? (
+                            {user && user.role === "staff" ? (
                               <Link
                                 to={
                                   "/courses/" +
