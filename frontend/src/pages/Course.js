@@ -193,7 +193,7 @@ const Course = ({ user }) => {
             {ongoingClasses.length > 0 && (
               <div className="">
                 <h6>ONGOING CLASSES</h6>
-                <table class="table">
+                <table className="table table-hover">
                   <thead>
                     <tr>
                       <th scope="col">Class</th>
@@ -250,7 +250,7 @@ const Course = ({ user }) => {
             {upcomingClasses.length > 0 && (
               <div className="mt-4">
                 <h6>UPCOMING CLASSES</h6>
-                <table class="table">
+                <table className="table">
                   <thead>
                     <tr>
                       <th scope="col">Class</th>
@@ -297,7 +297,7 @@ const Course = ({ user }) => {
             {previousClasses.length > 0 && (
               <div className="mt-4">
                 <h6>PREVIOUS CLASSES</h6>
-                <table class="table">
+                <table className="table">
                   <thead>
                     <tr>
                       <th scope="col">Class</th>
