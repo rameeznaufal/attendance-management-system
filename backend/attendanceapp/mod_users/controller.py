@@ -91,8 +91,10 @@ def enroll_student_into_course(reg_no, course_id):
     cursor.execute("INSERT INTO enrolled VALUES (%s,%s)", (reg_no, course_id,))
 
     conn.commit()
+    cursor.execute("SELECT course_name from course WHERE course_id = %s", (course_id,))
+    course_name = cursor.fetchone()
     db.close_db()
-    return {"reg_no": reg_no}, 201
+    return {"course_name": course_name}, 201
 
 
 @applet.route('/staff/<staff_id>/courses', methods=['GET'])

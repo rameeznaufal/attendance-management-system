@@ -90,6 +90,16 @@ def edit_class_details(class_id,course_id):
     db.close_db()
     return {'message': 'Class details edited'}, 200
 
+@applet.route('/<class_id>/course/<course_id>', methods=['GET'])
+@jwt_required()
+def get_class_details(class_id,course_id):
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute("select slot_id, class_date from class where class_id=%s and course_id=%s",( class_id, course_id,))
+    class_ = cursor.fetchone()
+    db.close_db()
+    return {'slot_id': class_[0], 'class_date': class_[1]}, 200
+
 @applet.route('/<class_id>/course/<course_id>', methods=['DELETE'])
 @jwt_required()
 def delete_class(class_id,course_id):
@@ -116,21 +126,15 @@ def delete_class(class_id,course_id):
 @applet.route('/<class_id>/course/<course_id>', methods=['GET'])
 @jwt_required()
 def get_student_class_details_in_course(class_id,course_id):
-
     conn = db.get_db()
     cursor = conn.cursor()
-
-    content = request.get_json(silent=True)
-    
     try:
         cursor.execute("select * from class c,attendance a where class_id=%s and course_id=%s",(class_id,course_id,))
         classes_list=cursor.fetchall()
-
         if not classes_list:
             return{'message': 'Class not found'}, 404
     except:
         return {"message": "Bad Request"}, 400
-
     cursor.execute("delete from class where class_id=%s and course_id=%s",(class_id,course_id,))
     conn.commit()
     db.close_db()
@@ -201,17 +205,3 @@ def get_attendance_details_of_student_in_course(reg_no,course_id):
     db.close_db()
     return json.dumps(response), 200
 
-# @applet.route('/users/<reg_no>', methods=['GET'])
-# @jwt_required()
-# def list_of_upcoming_classes_of_student(reg_no):
-#     conn = db.get_db()
-#     cursor = conn.cursor()
-#     cursor.execute("SELECT * from attendance a, class c,slot s where a.reg_no=%s and c.class_date=current_date and s.slot_id=c.slot_id and s.end_time>=current_time", (reg_no,))
-#     class_details = cursor.fetchall()
-#     # if not student_details:
-#     #     return{'message': 'No classes held in course or Invalid details entered'}, 404
-#     response = []
-#     for class_ in class_details:
-#         response.append({'present': present, 'absent': absent, 'late':late, 'total':total})
-#     db.close_db()
-#     return json.dumps(response), 200
