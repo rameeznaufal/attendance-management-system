@@ -139,3 +139,69 @@ def get_student_class_details_in_course(class_id,course_id):
     conn.commit()
     db.close_db()
     return {'message': 'Class deleted'}, 204
+
+@applet.route('/<course_id>/classes/student/<reg_no>', methods=['GET'])
+@jwt_required()
+def get_classes_in_course(course_id,reg_no):
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT a.reg_no, c.class_id,  c.class_date, s.start_time, s.end_time FROM attendance a, class c, slot s WHERE c.class_id=a.class_id and c.course_id=a.course_id and c.slot_id=s.slot_id and  a.reg_no =%s and a.course_id=%s", (reg_no,course_id,))
+    class_details = cursor.fetchall()
+    if not class_details:
+        return{'message': 'Student Not enrolled or Invalid details entered'}, 404
+    response = []
+    for class_ in class_details:
+        response.append({'reg_no': class_[0], 'class_id': class_[1], 'class_date': str(class_[2]), 'start_time': str(class_[3]), 'end_time': str(class_[4])})
+    db.close_db()
+    return json.dumps(response, default=myconverter), 200
+
+@applet.route('/<class_id>/courses/<course_id>', methods=['GET'])
+@jwt_required()
+def get_attendance_details_of_class(class_id,course_id):
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * from attendance where class_id=%s and course_id=%s", (class_id,course_id,))
+    student_details = cursor.fetchall()
+    if not student_details:
+        return{'message': 'No classes held or Invalid details entered'}, 404
+    response = []
+    absent=0
+    present=0
+    late=0
+    for student_ in student_details:
+        if student_[3]==0:
+            absent=absent+1
+        elif student_[3]==1:
+            present=present+1
+        elif student_[3]==2:
+            late=late+1
+    total=present+absent+late
+    response.append({'present': present, 'absent': absent, 'late':late, 'total':total})
+    db.close_db()
+    return json.dumps(response), 200
+
+@applet.route('/users/<reg_no>/courses/<course_id>', methods=['GET'])
+@jwt_required()
+def get_attendance_details_of_student_in_course(reg_no,course_id):
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * from attendance where reg_no=%s and course_id=%s", (reg_no,course_id,))
+    student_details = cursor.fetchall()
+    if not student_details:
+        return{'message': 'No classes held in course or Invalid details entered'}, 404
+    response = []
+    absent=0
+    present=0
+    late=0
+    for student_ in student_details:
+        if student_[3]==0:
+            absent=absent+1
+        elif student_[3]==1:
+            present=present+1
+        elif student_[3]==2:
+            late=late+1
+    total=present+absent+late
+    response.append({'present': present, 'absent': absent, 'late':late, 'total':total})
+    db.close_db()
+    return json.dumps(response), 200
+
