@@ -148,6 +148,11 @@ const Course = ({ user }) => {
     return getAMPM(st) + " - " + getAMPM(et);
   };
 
+  const goToClass = (class_id) =>{
+    navigate("/courses/"+cid+"/classes/"+class_id);
+    return;
+  }
+
   return (
     <div>
       {loading ? (
@@ -188,7 +193,7 @@ const Course = ({ user }) => {
             {ongoingClasses.length > 0 && (
               <div className="">
                 <h6>ONGOING CLASSES</h6>
-                <table class="table">
+                <table className="table table-hover">
                   <thead>
                     <tr>
                       <th scope="col">Class</th>
@@ -199,7 +204,7 @@ const Course = ({ user }) => {
                   <tbody>
                     {ongoingClasses.map((c) => {
                       return (
-                        <tr className="align-items-center">
+                        <tr className="align-items-center" onClick={() => goToClass(c.class_id)}>
                           <td>{c.class_id}</td>
                           <td>
                             {displayDate(c.class_date)}
@@ -211,7 +216,7 @@ const Course = ({ user }) => {
                             )}
                           </td>
                           <td>
-                            {user.role === "staff" ? (
+                            {user && user.role === "staff" ? (
                               <Link
                                 to={
                                   "/courses/" + cid + "/classes/" + c.class_id
@@ -245,7 +250,7 @@ const Course = ({ user }) => {
             {upcomingClasses.length > 0 && (
               <div className="mt-4">
                 <h6>UPCOMING CLASSES</h6>
-                <table class="table">
+                <table className="table">
                   <thead>
                     <tr>
                       <th scope="col">Class</th>
@@ -268,7 +273,7 @@ const Course = ({ user }) => {
                             )}
                           </td>
                           <td>
-                            {user.role === "staff" && (
+                            {user && user.role === "staff" && (
                               <Link
                                 to={
                                   "/courses/" +
@@ -292,7 +297,7 @@ const Course = ({ user }) => {
             {previousClasses.length > 0 && (
               <div className="mt-4">
                 <h6>PREVIOUS CLASSES</h6>
-                <table class="table">
+                <table className="table">
                   <thead>
                     <tr>
                       <th scope="col">Class</th>
@@ -307,7 +312,7 @@ const Course = ({ user }) => {
                   <tbody>
                     {previousClasses.map((c) => {
                       return (
-                        <tr className="align-items-center">
+                        <tr className="align-items-center" onClick={() => goToClass(c.class_id)}>
                           <td>{c.class_id}</td>
                           <td>
                             {displayDate(c.class_date)}
@@ -319,7 +324,7 @@ const Course = ({ user }) => {
                             )}
                           </td>
                           <td>
-                            {user.role === "staff" ? (
+                            {user && user.role === "staff" ? (
                               <Link
                                 to={
                                   "/courses/" +

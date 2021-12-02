@@ -123,23 +123,6 @@ def delete_class(class_id,course_id):
     db.close_db()
     return {'message': 'Class deleted'}, 204
 
-@applet.route('/<class_id>/course/<course_id>', methods=['GET'])
-@jwt_required()
-def get_student_class_details_in_course(class_id,course_id):
-    conn = db.get_db()
-    cursor = conn.cursor()
-    try:
-        cursor.execute("select * from class c,attendance a where class_id=%s and course_id=%s",(class_id,course_id,))
-        classes_list=cursor.fetchall()
-        if not classes_list:
-            return{'message': 'Class not found'}, 404
-    except:
-        return {"message": "Bad Request"}, 400
-    cursor.execute("delete from class where class_id=%s and course_id=%s",(class_id,course_id,))
-    conn.commit()
-    db.close_db()
-    return {'message': 'Class deleted'}, 204
-
 @applet.route('/<course_id>/classes/student/<reg_no>', methods=['GET'])
 @jwt_required()
 def get_classes_in_course(course_id,reg_no):
@@ -155,7 +138,7 @@ def get_classes_in_course(course_id,reg_no):
     db.close_db()
     return json.dumps(response, default=myconverter), 200
 
-@applet.route('/<class_id>/courses/<course_id>', methods=['GET'])
+@applet.route('/<class_id>/course/<course_id>/stat', methods=['GET'])
 @jwt_required()
 def get_attendance_details_of_class(class_id,course_id):
     conn = db.get_db()
@@ -201,7 +184,6 @@ def get_attendance_details_of_student_in_course(reg_no,course_id):
         elif student_[3]==2:
             late=late+1
     total=present+absent+late
-    response.append({'present': present, 'absent': absent, 'late':late, 'total':total})
     db.close_db()
-    return json.dumps(response), 200
+    return json.dumps({'present': present, 'absent': absent, 'late':late, 'total':total}), 200
 

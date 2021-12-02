@@ -121,7 +121,7 @@ const EditClass = ({ user }) => {
             <Link className="" to={"/courses/" + cid}>
               {cid}
             </Link>{" "}
-            &#62; Add Class
+            &#62; Edit Class
           </h5>
         </div>
       </div>
