@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { BeatLoader } from "react-spinners";
 
 const ClassStat = ({ user }) => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [stats, setStats] = useState(null);
   var array = window.location.href.split("/");
   var course_id = array[array.length - 3];
   var class_id = array[array.length - 1];
@@ -30,7 +32,7 @@ const ClassStat = ({ user }) => {
       );
       if (res.ok) {
         res = await res.json();
-        console.log(res);
+        setStats(res[0]);
         setLoading(false);
       } else {
         navigate("/");
@@ -40,7 +42,25 @@ const ClassStat = ({ user }) => {
     })();
   }, [course_id, class_id]);
 
-  return <div>Wasssuppp</div>;
+  return (
+    <div>
+      {loading ? (
+        <div className="container text-center mt-5">
+          <BeatLoader loading />
+        </div>
+      ) : (
+        stats && (
+          <div>
+            Present: {stats.present}
+            <br />
+            Absent: {stats.absent}
+            <br />
+            Late: {stats.late}
+          </div>
+        )
+      )}
+    </div>
+  );
 };
 
 export default ClassStat;
