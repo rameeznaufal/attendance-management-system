@@ -187,3 +187,21 @@ def get_attendance_details_of_student_in_course(reg_no,course_id):
     db.close_db()
     return json.dumps({'present': present, 'absent': absent, 'late':late, 'total':total}), 200
 
+@applet.route('/users/<reg_no>/classes/upcoming>', methods=['GET'])
+@jwt_required()
+def get_upcoming_classes_ofsameday_ofstudent(reg_no):
+    conn = db.get_db()
+    cursor = conn.cursor()
+    cursor.execute(" SELECT * from attendance a, class c,slot s where a.reg_no=%s and c.class_date=current_date and s.slot_id=c.slot_id and s.end_time>=current_time;", (reg_no,))
+    class_details = cursor.fetchall()
+    if not class_details:
+        return{'message': 'No upcoming class today'}, 404
+    response = []
+    for class_ in class_details:
+        course_id=class_[2]
+        cursor.execute("select course_name from course where course_id=%s",(course_id,))
+        course_name=cursor.fetchone()
+        response.append({"course_name":course_name, "start_time":class_[9], "end_time":class_[10]})
+    db.close_db()
+    return json.dumps(response), 200
+
