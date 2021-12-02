@@ -123,7 +123,7 @@ def delete_class(class_id,course_id):
     db.close_db()
     return {'message': 'Class deleted'}, 204
 
-@applet.route('/<class_id>/course/<course_id>', methods=['GET'])
+@applet.route('/<class_id>/course/<course_id>/stat', methods=['GET'])
 @jwt_required()
 def get_student_class_details_in_course(class_id,course_id):
     conn = db.get_db()
