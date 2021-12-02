@@ -439,5 +439,28 @@ def get_upcoming_classes_ofsameday_ofstudent(reg_no):
     return json.dumps(response), 200
 
 
-#@applet.route('/profile/<reg_no>', methods=['GET'])
-#@jwt_required()
+@applet.route('/profile/<reg_no>', methods=['GET'])
+@jwt_required()
+def profile_display(reg_no):
+    conn = db.get_db()
+    curr = conn.cursor()
+    curr.execute("SELECT * from student where reg_no=%s", (reg_no,))
+    user = curr.fetchone()
+    if user:
+        db.close_db()
+        return {"reg_no":user[0],"email":user[1],"name":user[2],"mobile_no":user[3]}
+
+    curr.execute("SELECT * from staff where staff_id=%s", (reg_no,))
+    user = curr.fetchone()
+    if user:
+        db.close_db()
+        return {"staff_id":user[0],"email":user[1],"name":user[2],"mobile_no":user[3]}, 200
+    
+    return {"message":"Invalid UserID"}, 404
+        
+    
+    
+
+    
+    
+
