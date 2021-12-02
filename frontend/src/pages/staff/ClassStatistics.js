@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { BeatLoader } from "react-spinners";
+import { Pie } from "react-chartjs-2";
 
 const ClassStat = ({ user }) => {
   const [loading, setLoading] = useState(true);
@@ -55,7 +56,8 @@ const ClassStat = ({ user }) => {
             <br />
             Absent: {stats.absent}
             <br />
-            Late: {stats.late}
+            Late: {stats.late} <br />
+            <Pie data={stats} />
           </div>
         )
       )}
