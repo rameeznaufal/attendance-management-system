@@ -143,23 +143,23 @@ def get_classes_in_course(course_id,reg_no):
 def get_attendance_details_of_class(class_id,course_id):
     conn = db.get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT * from attendance where class_id=%s and course_id=%s", (class_id,course_id,))
+    #cursor.execute("SELECT * from attendance where class_id=%s and course_id=%s", (class_id,course_id,))
+    cursor.execute("SELECT s.name,s.reg_no,a.status from student s, attendance a where a.reg_no=s.reg_no and class_id=%s and course_id=%s", (class_id,course_id,))
     student_details = cursor.fetchall()
     if not student_details:
         return{'message': 'No classes held or Invalid details entered'}, 404
     response = []
-    absent=0
-    present=0
-    late=0
+    absent = []
+    present = []
+    late = []
     for student_ in student_details:
-        if student_[3]==0:
-            absent=absent+1
-        elif student_[3]==1:
-            present=present+1
-        elif student_[3]==2:
-            late=late+1
-    total=present+absent+late
-    response.append({'present': present, 'absent': absent, 'late':late, 'total':total})
+        if student_[2]==0:
+            absent.append({"name":student_[0],"reg_no":student_[1]})
+        elif student_[2]==1:
+            present.append({"name":student_[0],"reg_no":student_[1]})
+        elif student_[2]==2:
+            late.append({"name":student_[0],"reg_no":student_[1]})
+    response.append({'present': present, 'absent': absent, 'late':late})
     db.close_db()
     return json.dumps(response), 200
 
@@ -187,21 +187,4 @@ def get_attendance_details_of_student_in_course(reg_no,course_id):
     db.close_db()
     return json.dumps({'present': present, 'absent': absent, 'late':late, 'total':total}), 200
 
-@applet.route('/users/<reg_no>/classes/upcoming>', methods=['GET'])
-@jwt_required()
-def get_upcoming_classes_ofsameday_ofstudent(reg_no):
-    conn = db.get_db()
-    cursor = conn.cursor()
-    cursor.execute(" SELECT * from attendance a, class c,slot s where a.reg_no=%s and c.class_date=current_date and s.slot_id=c.slot_id and s.end_time>=current_time;", (reg_no,))
-    class_details = cursor.fetchall()
-    if not class_details:
-        return{'message': 'No upcoming class today'}, 404
-    response = []
-    for class_ in class_details:
-        course_id=class_[2]
-        cursor.execute("select course_name from course where course_id=%s",(course_id,))
-        course_name=cursor.fetchone()
-        response.append({"course_name":course_name, "start_time":class_[9], "end_time":class_[10]})
-    db.close_db()
-    return json.dumps(response), 200
 
