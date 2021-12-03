@@ -206,7 +206,7 @@ const Course = ({ user }) => {
                       return (
                         <tr
                           className="align-items-center"
-                          onClick={() => goToClass(c.class_id)}
+                          // {onClick={() => user.role === "staff" && goToClass(c.class_id)}}
                         >
                           <td>{c.class_id}</td>
                           <td>
@@ -231,7 +231,7 @@ const Course = ({ user }) => {
                                     "/mark"
                                   }
                                 >
-                                  "Mark Attendance"
+                                  Mark Attendance
                                 </Link>
                               ) : (
                                 statusArray[c.status]
