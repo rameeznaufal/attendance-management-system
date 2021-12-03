@@ -6,27 +6,18 @@ import { Pie } from "react-chartjs-2";
 import { Link } from "react-router-dom";
 Chart.register([Tooltip, Legend, ArcElement]);
 
-const ClassStat = ({ user }) => {
+const ClassStatistics = ({ user }) => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const [stats, setStats] = useState(null);
   var array = window.location.href.split("/");
   var course_id = array[array.length - 3];
   var class_id = array[array.length - 1];
-  const [labels, setLabels] = useState([]);
   const [data, setData] = useState([]);
 
-  const [presentStudents, setPresentStudents] = useState([
-    { name: "Azzaam", reg_no: "B190785CS" },
-  ]);
-  const [absentStudents, setAbsentStudents] = useState([
-    { name: "Azzaam", reg_no: "B190785CS" },
-    { name: "Jaseem", reg_no: "B190703CS" },
-  ]);
-  const [lateStudents, setLateStudents] = useState([
-    { name: "Azzaam", reg_no: "B190785CS" },
-    { name: "Jaseem", reg_no: "B190703CS" },
-  ]);
+  const [presentStudents, setPresentStudents] = useState([]);
+  const [absentStudents, setAbsentStudents] = useState([]);
+  const [lateStudents, setLateStudents] = useState([]);
+
   useEffect(() => {
     setLoading(true);
     if (!user || user.role !== "staff") {
@@ -51,14 +42,10 @@ const ClassStat = ({ user }) => {
       if (res.ok) {
         res = await res.json();
         res = res[0];
-        console.log(res);
-        var labels = [];
-        var data = [];
-        for (let i in res) {
-          labels.push(i);
-          data.push(parseInt(res[i]));
-        }
-        setLabels(labels);
+        setPresentStudents(res.present);
+        setLateStudents(res.late);
+        setAbsentStudents(res.absent);
+        setData([res.present.length, res.absent.length, res.late.length]);
         setLoading(false);
       } else {
         navigate("/");
@@ -80,7 +67,7 @@ const ClassStat = ({ user }) => {
             <Link className="" to={"/courses/" + course_id}>
               {course_id}
             </Link>{" "}
-            &#62; Attendance Stats
+            &#62; Attendance Statistics
           </h5>
         </div>
       </div>
@@ -92,12 +79,11 @@ const ClassStat = ({ user }) => {
         <div className="d-flex w-100 flex-column">
           <div className="text-center mb-3">
             <Pie
-              className=""
               data={{
-                labels: labels,
+                labels: ["Present", "Absent", "Late"],
                 datasets: [
                   {
-                    label: "My First Dataset",
+                    label: "Class attendance statistics",
                     data: data,
                     backgroundColor: [
                       "rgb(119, 221, 119)",
@@ -124,7 +110,8 @@ const ClassStat = ({ user }) => {
                 <thead>
                   <tr>
                     <th scope="col" className="text-success">
-                      Present ({presentStudents.length})
+                      Present (
+                      {presentStudents.length ? presentStudents.length : 0})
                     </th>
                   </tr>
                 </thead>
@@ -144,7 +131,8 @@ const ClassStat = ({ user }) => {
                 <thead>
                   <tr>
                     <th scope="col" className="text-danger">
-                      Absent ({absentStudents.length})
+                      Absent (
+                      {absentStudents.length ? absentStudents.length : 0})
                     </th>
                   </tr>
                 </thead>
@@ -164,7 +152,7 @@ const ClassStat = ({ user }) => {
                 <thead>
                   <tr>
                     <th scope="col" className="text-warning">
-                      Late ({lateStudents.length})
+                      Late ({lateStudents.length ? lateStudents.length : 0})
                     </th>
                   </tr>
                 </thead>
@@ -186,4 +174,4 @@ const ClassStat = ({ user }) => {
   );
 };
 
-export default ClassStat;
+export default ClassStatistics;

@@ -143,26 +143,27 @@ def get_classes_in_course(course_id,reg_no):
 def get_attendance_details_of_class(class_id,course_id):
     conn = db.get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT * from attendance where class_id=%s and course_id=%s", (class_id,course_id,))
+    #cursor.execute("SELECT * from attendance where class_id=%s and course_id=%s", (class_id,course_id,))
+    cursor.execute("SELECT s.name,s.reg_no,a.status from student s, attendance a where a.reg_no=s.reg_no and class_id=%s and course_id=%s", (class_id,course_id,))
     student_details = cursor.fetchall()
     if not student_details:
         return{'message': 'No classes held or Invalid details entered'}, 404
     response = []
-    absent=0
-    present=0
-    late=0
+    absent = []
+    present = []
+    late = []
     for student_ in student_details:
-        if student_[3]==0:
-            absent=absent+1
-        elif student_[3]==1:
-            present=present+1
-        elif student_[3]==2:
-            late=late+1
+        if student_[2]==0:
+            absent.append({"name":student_[0],"reg_no":student_[1]})
+        elif student_[2]==1:
+            present.append({"name":student_[0],"reg_no":student_[1]})
+        elif student_[2]==2:
+            late.append({"name":student_[0],"reg_no":student_[1]})
     response.append({'present': present, 'absent': absent, 'late':late})
     db.close_db()
     return json.dumps(response), 200
 
-@applet.route('/users/<reg_no>/courses/<course_id>', methods=['GET'])
+@applet.route('/students/<reg_no>/courses/<course_id>', methods=['GET'])
 @jwt_required()
 def get_attendance_details_of_student_in_course(reg_no,course_id):
     conn = db.get_db()
@@ -183,4 +184,5 @@ def get_attendance_details_of_student_in_course(reg_no,course_id):
             late=late+1
     db.close_db()
     return json.dumps({'present': present, 'absent': absent, 'late':late}), 200
+
 
