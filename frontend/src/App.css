@@ -19,9 +19,13 @@ body {
 .logo {
   width: 40%;
   object-fit: contain;
-  /* margin-left: 30px; */
 }
 
 .table > tbody > tr > td {
   vertical-align: middle;
 }
+
+/* .pie-chart {
+  max-height: 50vh;
+  max-width: 50vh;
+} */

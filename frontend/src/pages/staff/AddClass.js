@@ -11,7 +11,7 @@ const AddClass = ({ user }) => {
   );
   const [slot, setSlot] = useState(0);
   const [adding, setAdding] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [courseID, setCourseID] = useState("");
   const navigate = useNavigate();
 

@@ -12,11 +12,12 @@ import Course from "./pages/Course.js";
 import AddClass from "./pages/staff/AddClass.js";
 import EditClass from "./pages/staff/EditClass.js";
 import MarkAttendance from "./pages/student/MarkAttendance.js";
-import AttendanceStat from "./pages/AttendanceStat.js";
+import AttendanceStat from "./pages/StudentStatistics.js";
 import StudentsEnrolled from "./pages/staff/StudentsEnrolled.js";
+import ClassStatistics from "./pages/staff/ClassStatistics.js";
+import StudentStatistics from "./pages/StudentStatistics.js";
 import { BeatLoader } from "react-spinners";
 import NavbarTop from "./components/NavbarTop.js";
-import ClassStatistics from "./pages/staff/ClassStatistics.js"
 import "./custom.scss";
 
 function App() {
@@ -136,6 +137,11 @@ function App() {
                 path="/courses/:courseid/classes/:classid"
                 exact
                 element={<ClassStatistics user={user} />}
+              />
+              <Route
+                path="/courses/:courseid/classes/:classid/students/:reg_no"
+                exact
+                element={<StudentStatistics user={user} />}
               />
               <Route path="/courses" exact element={<Courses user={user} />} />
             </Routes>
