@@ -1,5 +1,7 @@
 import React, { useState, useEffect} from "react";
 
+//This js file handles the profile page for any user
+
 const Profile = ({user}) => {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
@@ -25,5 +27,3 @@ const Profile = ({user}) => {
                 console.log(res)
             }
     //const [details,setDetails] = useState("")
-
-

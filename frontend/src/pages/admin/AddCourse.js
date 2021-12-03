@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { Button, Form, FormGroup, Input, Label } from "reactstrap";
 import Spinner from "react-bootstrap/Spinner";
 
+
+//This javascript file consists of functions relating to adding a course by admin
 const AddCourse = ({ user }) => {
   const [course_name, setCourse_name] = useState("");
   const [course_id, setCourse_id] = useState("");

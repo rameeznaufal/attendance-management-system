@@ -3,6 +3,8 @@ import { Button, Form, FormGroup, Input, FormFeedback } from "reactstrap";
 import Spinner from "react-bootstrap/Spinner";
 import { useNavigate } from "react-router";
 
+//This javascript file handles the home page of a student
+
 const StudentHome = ({ user, courses, setCourses }) => {
   const [enrolling, setEnrolling] = useState(false);
   const [courseID, setCourseID] = useState("");

@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import Spinner from "react-bootstrap/Spinner";
 import { Button } from "reactstrap";
 
+//This javascript file handles the marking of attendance by a student
+
 const MarkAttendance = ({ user }) => {
   //Fetch and verify course
   //Fetch and store class

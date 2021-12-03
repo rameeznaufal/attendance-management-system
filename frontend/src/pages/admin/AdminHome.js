@@ -1,3 +1,5 @@
+//This javascript file handles the Admin home page
+
 import React from "react";
 import { Link } from "react-router-dom";
 const AdminHome = () => {

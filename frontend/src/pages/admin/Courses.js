@@ -1,3 +1,5 @@
+//This javascript file handles the course page for the admin
+
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FiSearch, FiFolderPlus } from "react-icons/fi";

@@ -5,6 +5,8 @@ import { Button, Form, FormGroup, Input, Label } from "reactstrap";
 import Spinner from "react-bootstrap/Spinner";
 import { BeatLoader } from "react-spinners";
 
+
+//This javascript file consists of functions relating to adding a class by staff
 const AddClass = ({ user }) => {
   const [classDate, setClassDate] = useState(
     new Date().toISOString().slice(0, 10)

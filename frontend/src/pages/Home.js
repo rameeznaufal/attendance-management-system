@@ -7,6 +7,8 @@ import AdminHome from "./admin/AdminHome.js";
 import StaffHome from "./staff/StaffHome.js";
 import StudentHome from "./student/StudentHome.js";
 
+
+//This is a common js file for all types of users to deal with their respective home screens
 const Home = ({ user, setUser, courses, setCourses }) => {
   const [regNo, setRegNo] = useState("");
   const [password, setPassword] = useState("");

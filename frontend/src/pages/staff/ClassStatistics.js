@@ -6,6 +6,8 @@ import { Pie } from "react-chartjs-2";
 import { Link } from "react-router-dom";
 Chart.register([Tooltip, Legend, ArcElement]);
 
+//This javascript file consists of functions to show the class statistics to the staff
+
 const ClassStatistics = ({ user }) => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();

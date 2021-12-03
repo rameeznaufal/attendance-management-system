@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { BeatLoader } from "react-spinners";
+
+//This js file is a common file for both staff and student that handles the classes relating to courses
 const Course = ({ user }) => {
   const navigate = useNavigate();
   const [course, setCourse] = useState(null);

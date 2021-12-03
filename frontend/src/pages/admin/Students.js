@@ -1,3 +1,5 @@
+//This javascript file handles the Students page for the admin
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FiSearch, FiUserPlus } from "react-icons/fi";

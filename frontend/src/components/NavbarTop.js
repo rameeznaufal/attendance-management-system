@@ -3,6 +3,8 @@ import { Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 
+
+//This js file handles the navbar at the top of every page
 const NavbarTop = ({ user, setUser, courses }) => {
   const navigate = useNavigate();
 

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Button, Form, FormGroup, Input, Label } from "reactstrap";
 import Spinner from "react-bootstrap/Spinner";
 
+//This javascript file consists of functions relating to adding a staff member by admin
 const AddStaff = ({ user }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

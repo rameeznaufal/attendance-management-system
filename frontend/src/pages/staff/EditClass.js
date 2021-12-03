@@ -6,6 +6,8 @@ import Spinner from "react-bootstrap/Spinner";
 import { BeatLoader } from "react-spinners";
 import { MdEdit, MdDelete } from "react-icons/md";
 
+
+//This javascript file consists of functions relating to editing a class by staff
 const EditClass = ({ user }) => {
   const [classDate, setClassDate] = useState(
     new Date().toISOString().slice(0, 10)
