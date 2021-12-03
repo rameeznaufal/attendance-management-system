@@ -8,7 +8,6 @@ This is a Web Application used for the Attendance Management of a Educational In
 * [Programming Language Requirements](#programmingLanguageRequirements)
 * [Downloading Important Modules](#downloadingImportantModules)
 * [Server and Application Setup](#serverSetup)
-* [API Reference](#apiReference)
 
 ## Programming Language Requirements    <a name="programmingLanguageRequirements"></a>
 Use the latest version of:- [Python](https://www.python.org/), [Flask](https://flask.palletsprojects.com/en/2.0.x/), [PostgreSQL](https://www.postgresql.org/)
