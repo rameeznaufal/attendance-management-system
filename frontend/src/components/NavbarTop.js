@@ -53,7 +53,11 @@ const NavbarTop = ({ user, setUser, courses }) => {
               </Nav>
               <Nav>
                 <Nav.Link onClick={handleLogOut}>Logout</Nav.Link>
-                <Nav.Link href="#profile">Profile</Nav.Link>
+                {user && user.role !== "admin" && (
+                  <Link style={{ textDecoration: "none" }} to="/profile">
+                    Profile
+                  </Link>
+                )}
               </Nav>
             </Navbar.Collapse>
           </>
