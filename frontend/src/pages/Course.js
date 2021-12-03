@@ -148,10 +148,10 @@ const Course = ({ user }) => {
     return getAMPM(st) + " - " + getAMPM(et);
   };
 
-  const goToClass = (class_id) =>{
-    navigate("/courses/"+cid+"/classes/"+class_id);
+  const goToClass = (class_id) => {
+    navigate("/courses/" + cid + "/classes/" + class_id);
     return;
-  }
+  };
 
   return (
     <div>
@@ -204,7 +204,10 @@ const Course = ({ user }) => {
                   <tbody>
                     {ongoingClasses.map((c) => {
                       return (
-                        <tr className="align-items-center" onClick={() => goToClass(c.class_id)}>
+                        <tr
+                          className="align-items-center"
+                          onClick={() => goToClass(c.class_id)}
+                        >
                           <td>{c.class_id}</td>
                           <td>
                             {displayDate(c.class_date)}
@@ -216,29 +219,23 @@ const Course = ({ user }) => {
                             )}
                           </td>
                           <td>
-                            {user && user.role === "staff" ? (
-                              <Link
-                                to={
-                                  "/courses/" + cid + "/classes/" + c.class_id
-                                }
-                              >
-                                Edit
-                              </Link>
-                            ) : c.status === 0 ? (
-                              <Link
-                                to={
-                                  "/courses/" +
-                                  cid +
-                                  "/classes/" +
-                                  c.class_id +
-                                  "/edit"
-                                }
-                              >
-                                "Mark Attendance"
-                              </Link>
-                            ) : (
-                              statusArray[c.status]
-                            )}
+                            {user &&
+                              user.role === "student" &&
+                              (c.status === 0 ? (
+                                <Link
+                                  to={
+                                    "/courses/" +
+                                    cid +
+                                    "/classes/" +
+                                    c.class_id +
+                                    "/mark"
+                                  }
+                                >
+                                  "Mark Attendance"
+                                </Link>
+                              ) : (
+                                statusArray[c.status]
+                              ))}
                           </td>
                         </tr>
                       );
@@ -302,9 +299,7 @@ const Course = ({ user }) => {
                     <tr>
                       <th scope="col">Class</th>
                       <th scope="col">Date &#38; Time</th>
-                      {user && user.role === "staff" ? (
-                        <th scope="col"></th>
-                      ) : (
+                      {user && user.role === "student" && (
                         <th scope="col">Status</th>
                       )}
                     </tr>
@@ -312,7 +307,10 @@ const Course = ({ user }) => {
                   <tbody>
                     {previousClasses.map((c) => {
                       return (
-                        <tr className="align-items-center" onClick={() => goToClass(c.class_id)}>
+                        <tr
+                          className="align-items-center"
+                          onClick={() => goToClass(c.class_id)}
+                        >
                           <td>{c.class_id}</td>
                           <td>
                             {displayDate(c.class_date)}
@@ -324,19 +322,7 @@ const Course = ({ user }) => {
                             )}
                           </td>
                           <td>
-                            {user && user.role === "staff" ? (
-                              <Link
-                                to={
-                                  "/courses/" +
-                                  cid +
-                                  "/classes/" +
-                                  c.class_id +
-                                  "/edit"
-                                }
-                              >
-                                Edit
-                              </Link>
-                            ) : (
+                            {user && user.role === "student" && (
                               <>{statusArray[c.status]}</>
                             )}
                           </td>

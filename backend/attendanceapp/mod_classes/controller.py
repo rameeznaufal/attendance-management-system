@@ -163,7 +163,7 @@ def get_attendance_details_of_class(class_id,course_id):
     db.close_db()
     return json.dumps(response), 200
 
-@applet.route('/users/<reg_no>/courses/<course_id>', methods=['GET'])
+@applet.route('/students/<reg_no>/courses/<course_id>', methods=['GET'])
 @jwt_required()
 def get_attendance_details_of_student_in_course(reg_no,course_id):
     conn = db.get_db()
@@ -172,7 +172,6 @@ def get_attendance_details_of_student_in_course(reg_no,course_id):
     student_details = cursor.fetchall()
     if not student_details:
         return{'message': 'No classes held in course or Invalid details entered'}, 404
-    response = []
     absent=0
     present=0
     late=0
@@ -183,8 +182,7 @@ def get_attendance_details_of_student_in_course(reg_no,course_id):
             present=present+1
         elif student_[3]==2:
             late=late+1
-    total=present+absent+late
     db.close_db()
-    return json.dumps({'present': present, 'absent': absent, 'late':late, 'total':total}), 200
+    return json.dumps({'present': present, 'absent': absent, 'late':late}), 200
 
 
