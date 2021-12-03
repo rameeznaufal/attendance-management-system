@@ -25,6 +25,7 @@ def refresh_expiring_jwts(response):
     except (RuntimeError, KeyError):
         return response
 
+#This API will add create a new class for a particular course and then set the attendance status of all students enrolled in that course to 0(absent)
 @applet.route('/add', methods=['POST'])
 @jwt_required()
 def add_class():
@@ -62,6 +63,8 @@ def add_class():
     db.close_db()
     return {'message': 'Class added'}, 201
 
+
+#This API is used to edit the details of a class. It can change the date and slot of an already created class
 @applet.route('/<class_id>/course/<course_id>', methods=['PUT'])
 @jwt_required()
 def edit_class_details(class_id,course_id):
@@ -90,6 +93,8 @@ def edit_class_details(class_id,course_id):
     db.close_db()
     return {'message': 'Class details edited'}, 200
 
+
+#This API is used to get the details of a class of a particular course. It will get the slot and date of the class
 @applet.route('/<class_id>/course/<course_id>', methods=['GET'])
 @jwt_required()
 def get_class_details(class_id,course_id):
@@ -100,6 +105,8 @@ def get_class_details(class_id,course_id):
     db.close_db()
     return {'slot_id': class_[0], 'class_date': class_[1]}, 200
 
+
+#This API will delete a class of a given course
 @applet.route('/<class_id>/course/<course_id>', methods=['DELETE'])
 @jwt_required()
 def delete_class(class_id,course_id):
@@ -123,20 +130,6 @@ def delete_class(class_id,course_id):
     db.close_db()
     return {'message': 'Class deleted'}, 204
 
-@applet.route('/<course_id>/classes/student/<reg_no>', methods=['GET'])
-@jwt_required()
-def get_classes_in_course(course_id,reg_no):
-    conn = db.get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT a.reg_no, c.class_id,  c.class_date, s.start_time, s.end_time FROM attendance a, class c, slot s WHERE c.class_id=a.class_id and c.course_id=a.course_id and c.slot_id=s.slot_id and  a.reg_no =%s and a.course_id=%s", (reg_no,course_id,))
-    class_details = cursor.fetchall()
-    if not class_details:
-        return{'message': 'Student Not enrolled or Invalid details entered'}, 404
-    response = []
-    for class_ in class_details:
-        response.append({'reg_no': class_[0], 'class_id': class_[1], 'class_date': str(class_[2]), 'start_time': str(class_[3]), 'end_time': str(class_[4])})
-    db.close_db()
-    return json.dumps(response, default=myconverter), 200
 
 @applet.route('/<class_id>/course/<course_id>/stat', methods=['GET'])
 @jwt_required()
@@ -163,6 +156,8 @@ def get_attendance_details_of_class(class_id,course_id):
     db.close_db()
     return json.dumps(response), 200
 
+
+#This API will give the attendance history of a student for a particular course enrolled for by that student
 @applet.route('/students/<reg_no>/courses/<course_id>', methods=['GET'])
 @jwt_required()
 def get_attendance_details_of_student_in_course(reg_no,course_id):

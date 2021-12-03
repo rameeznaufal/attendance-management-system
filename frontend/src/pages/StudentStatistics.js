@@ -92,13 +92,25 @@ const StudentStatistics = ({ user }) => {
           </div>
           <div className="text-center">
             <h5>
-            Present: {data[0]} ({Math.round(data[0]/(data[0]+data[1]+data[2]) * 100).toFixed(2)}%)
-            <br></br>
-            Absent: {data[1]} ({Math.round(data[1]/(data[0]+data[1]+data[2]) * 100).toFixed(2)}%)
-            <br></br>
-            Late: {data[2]} ({Math.round(data[2]/(data[0]+data[1]+data[2]) * 100).toFixed(2)}%)
-            <br></br>
-            Total: {data[0]+data[1]+data[2]}
+              Present: {data[0]} (
+              {Math.round(
+                (data[0] / (data[0] + data[1] + data[2])) * 100
+              ).toFixed(2)}
+              %)
+              <br></br>
+              Absent: {data[1]} (
+              {Math.round(
+                (data[1] / (data[0] + data[1] + data[2])) * 100
+              ).toFixed(2)}
+              %)
+              <br></br>
+              Late: {data[2]} (
+              {Math.round(
+                (data[2] / (data[0] + data[1] + data[2])) * 100
+              ).toFixed(2)}
+              %)
+              <br></br>
+              Total: {data[0] + data[1] + data[2]}
             </h5>
           </div>
         </div>

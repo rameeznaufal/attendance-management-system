@@ -25,6 +25,8 @@ def refresh_expiring_jwts(response):
     except (RuntimeError, KeyError):
         return response
 
+
+#This API is used to mark the attendance for the class of a particular course. A student can mark any of three options, namely, absent(0), present(1), or late(2). The marked attendance details will be updated in the corresponding database table by this API
 @applet.route('/mark', methods = ['POST'])
 @jwt_required()
 def add_class_attendance():
@@ -48,6 +50,8 @@ def add_class_attendance():
         db.close_db()
         return {'message': 'Class attendance could not be added'}, 500
         
+
+#This API will give us the attendace details of a particular student enrolled in a particular course for a given class of that course along with the details of that class like its start and end time and date
 @applet.route('/courses/<course_id>/classes/<class_id>/students/<reg_no>', methods = ['GET'])
 @jwt_required()
 def check_class_attendance(course_id, class_id, reg_no):

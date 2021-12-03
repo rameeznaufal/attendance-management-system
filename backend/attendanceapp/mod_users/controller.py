@@ -26,21 +26,8 @@ def refresh_expiring_jwts(response):
     except (RuntimeError, KeyError):
         return response
 
-# @applet.route('/students', methods = ['GET'])
-# @jwt_required()
-# def get_all_students_details(reg_no):
 
-#     conn = db.get_db()
-#     cursor = conn.cursor()
-#     cursor.execute("SELECT * FROM student")
-#     students = cursor.fetchall()
-#     response=[]
-#     for student in students:
-#         response.append({'reg_no':student[0],'email':student[1],'name':student[2],'mobile_no':student[3]})
-#     db.close_db()
-#     return json.dumps(response), 200
-
-
+#This API will give us the details of all registered students
 @applet.route('/students', methods=['GET'])
 @jwt_required()
 def get_all_students():
@@ -58,7 +45,7 @@ def get_all_students():
     db.close_db()
     return json.dumps(response), 200
 
-
+#This API will give the course id and course name of all the courses enrolled by a student
 @applet.route('/student/<reg_no>/courses', methods=['GET'])
 @jwt_required()
 def get_courses_of_student(reg_no):
@@ -74,7 +61,7 @@ def get_courses_of_student(reg_no):
     db.close_db()
     return json.dumps(response), 200
 
-
+#This API is used to enroll a student to a course
 @applet.route('/student/<reg_no>/courses/<course_id>/enroll', methods=['POST'])
 @jwt_required()
 def enroll_student_into_course(reg_no, course_id):
@@ -97,6 +84,7 @@ def enroll_student_into_course(reg_no, course_id):
     return {"course_name": course_name}, 201
 
 
+#This API will give the list of all courses taught by a staff
 @applet.route('/staff/<staff_id>/courses', methods=['GET'])
 @jwt_required()
 def get_courses_of_staff(staff_id):
@@ -113,6 +101,7 @@ def get_courses_of_staff(staff_id):
     return json.dumps(response), 200
 
 
+#This API is used to verify if the user is logged in and then gets the details of the user
 @applet.route('/verify', methods=['GET'])
 @jwt_required()
 def user_verify():
@@ -135,6 +124,7 @@ def user_verify():
 
 
 # ----------------------------------------------------------STUDENT
+#This API will get the details of a student with a particular reg_no
 @applet.route('/students/<reg_no>', methods=['GET'])
 @jwt_required()
 def get_student(reg_no):
@@ -151,7 +141,7 @@ def get_student(reg_no):
     db.close_db()
     return response, 200
 
-
+#This API allows the admin to edit the details of a student
 @applet.route('/students/<reg_no>', methods=['PUT'])
 @jwt_required()
 def edit_student_details(reg_no):
@@ -174,7 +164,7 @@ def edit_student_details(reg_no):
         db.close_db()
         return {'message': 'Changes could not be saved'}, 500
 
-
+#This API allows the admin to delete a particular student
 @applet.route('/students/<reg_no>', methods=['DELETE'])
 @jwt_required()
 def delete_student_details(reg_no):
@@ -185,7 +175,7 @@ def delete_student_details(reg_no):
     db.close_db()
     return {'message': 'user deleted successfully'}, 204
 
-
+#This API allows the admin to create a new student
 @applet.route('/students', methods=['POST'])
 @jwt_required()
 def add_student():
@@ -213,6 +203,7 @@ def add_student():
 
 
 #----------------------------------------------------------- STAFF
+#This API gets the details of a staff with a particular staff_id
 @applet.route('/staffs/<staff_id>', methods=['GET'])
 @jwt_required()
 def get_staff(staff_id):
@@ -230,6 +221,7 @@ def get_staff(staff_id):
     return response, 200
 
 
+#This API allows the admin to edit the details of a staff
 @applet.route('/staffs/<staff_id>', methods=['PUT'])
 @jwt_required()
 def edit_staff_details(staff_id):
@@ -253,6 +245,7 @@ def edit_staff_details(staff_id):
         return {'message': 'Changes could not be saved'}, 500
 
 
+#This API allows the admin to delete a particular staff
 @applet.route('/staffs/<staff_id>', methods=['DELETE'])
 @jwt_required()
 def delete_staff_details(staff_id):
@@ -264,6 +257,7 @@ def delete_staff_details(staff_id):
     return {'message': 'user deleted successfully'}, 204
 
 
+#This API allows the admin to create a new staff
 @applet.route('/staffs', methods=['POST'])
 @jwt_required()
 def add_staff():
@@ -309,7 +303,7 @@ def get_all_staffs():
 
 # ----------------------------------------------------AUTHENTICATION
 
-
+#This API will add a user(staff/student)
 @applet.route('/signup', methods=['POST'])
 @jwt_required()
 def signup():
@@ -362,6 +356,7 @@ def signup():
         return {"message": "server error"}, 500
 
 
+#This API is used to log in to a user account
 @applet.route('/login', methods=['POST'])
 def login():
     conn = db.get_db()
@@ -409,7 +404,7 @@ def login():
     db.close_db()
     return {'message': 'invalid reg_no or password'}, 401
 
-
+#This API is used to log out from a user account
 @applet.route('/logout', methods=['POST'])
 @jwt_required()
 def logout():
@@ -419,7 +414,7 @@ def logout():
 
 
 
-
+#This API is used to get a list of all upcoming classes for a student on the day of viewing
 @applet.route('/students/<reg_no>/classes/upcoming', methods=['GET'])
 @jwt_required()
 def get_upcoming_classes_ofsameday_ofstudent(reg_no):
@@ -438,6 +433,29 @@ def get_upcoming_classes_ofsameday_ofstudent(reg_no):
     db.close_db()
     return json.dumps(response), 200
 
+#This API is used to get the profile details of a user
+@applet.route('/profile/<reg_no>', methods=['GET'])
+@jwt_required()
+def profile_display(reg_no):
+    conn = db.get_db()
+    curr = conn.cursor()
+    curr.execute("SELECT * from student where reg_no=%s", (reg_no,))
+    user = curr.fetchone()
+    if user:
+        db.close_db()
+        return {"reg_no":user[0],"email":user[1],"name":user[2],"mobile_no":user[3]}
 
-#@applet.route('/profile/<reg_no>', methods=['GET'])
-#@jwt_required()
+    curr.execute("SELECT * from staff where staff_id=%s", (reg_no,))
+    user = curr.fetchone()
+    if user:
+        db.close_db()
+        return {"staff_id":user[0],"email":user[1],"name":user[2],"mobile_no":user[3]}, 200
+    
+    return {"message":"Invalid UserID"}, 404
+        
+    
+    
+
+    
+    
+
