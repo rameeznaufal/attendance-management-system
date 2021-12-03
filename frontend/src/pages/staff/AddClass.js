@@ -11,7 +11,7 @@ const AddClass = ({ user }) => {
   const [classDate, setClassDate] = useState(
     new Date().toISOString().slice(0, 10)
   );
-  const [slot, setSlot] = useState(0);
+  const [slot, setSlot] = useState(1);
   const [adding, setAdding] = useState(false);
   const [loading, setLoading] = useState(true);
   const [courseID, setCourseID] = useState("");
