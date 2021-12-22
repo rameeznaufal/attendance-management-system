@@ -1,1 +1,1 @@
-web: gunicorn backend/attendanceapp:app
+web: cd backend/attendanceapp && gunicorn app:app
