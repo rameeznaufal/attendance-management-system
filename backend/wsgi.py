@@ -1,4 +1,4 @@
-from backend import attendanceapp
-from attendanceapp import create_app
+from backend.attendanceapp import app
+from backend.attendanceapp.app import create_app
  
-attendanceapp = create_app()
+app = create_app()
