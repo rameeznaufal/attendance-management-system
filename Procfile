@@ -1,1 +1,1 @@
-web: cd backend/attendanceapp && gunicorn wsgi:attendanceapp
+web: cd backend && gunicorn wsgi:attendanceapp
