@@ -1,13 +1,14 @@
 import os
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from flask import Flask, g
 from dotenv import load_dotenv
 from flask_jwt_extended import  JWTManager
 from flask_bcrypt import Bcrypt
+from flask.helpers import send_from_directory
 from datetime import timedelta
 
 def create_app():
-    app = Flask("attendanceapp")
+    app = Flask("attendanceapp", static_folder = './../../frontend/build', static_url_path = "")
     
     global bcrypt
     bcrypt = Bcrypt(app)
@@ -15,7 +16,7 @@ def create_app():
         "origins": ["http://127.0.0.1:3000", "http://localhost:3000"],
         "supports_credentials": True
     }
-    cors = CORS(app, resources={
+    CORS(app, resources={
         r"\/api\/.*": api_cors_config
     })
 
@@ -33,11 +34,27 @@ def create_app():
     jwt = JWTManager(app)
 
     from attendanceapp.mod_users.controller import applet as users_applet
-    # from . import db 
-    # db.init_app(app) 
-    # db.create_all()
+    from attendanceapp.mod_courses.controller import applet as courses_applet        
+    from attendanceapp.mod_attendance.controller import applet as attendance_applet  
+    from attendanceapp.mod_classes.controller import applet as classes_applet
     app.register_blueprint(users_applet)
+    app.register_blueprint(courses_applet)
+    app.register_blueprint(attendance_applet)
+    app.register_blueprint(classes_applet)
+
+    @app.route('/api', methods=['GET'])
+    @cross_origin()
+    def index():
+        return {"message": "API working"}
+
+    @app.route('/')
+    @cross_origin()
+    def serve():
+        return send_from_directory(app.static_folder, 'index.html')
+
     return app
+
+
 
 if __name__ == "__main__":
     app = create_app()
