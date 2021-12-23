@@ -42,17 +42,19 @@ def create_app():
     app.register_blueprint(attendance_applet)
     app.register_blueprint(classes_applet)
 
-    @app.route('/', defaults={'path': ''})
-    @app.route('/<path:path>')
+    @app.route('/')
     @cross_origin()
     def serve(path):
-        if path != "" and os.path.exists(app.static_folder + '/' + path):
-            return send_from_directory(app.static_folder, path)
-        else:
-            return send_from_directory(app.static_folder, 'index.html')
+        return send_from_directory(app.static_folder, 'index.html')
 
+    @app.route("/<path:path>")
+    def static_proxy(path):
+        """static folder serve"""
+        file_name = path.split("/")[-1]
+        dir_name = os.path.join(app.static_folder, "/".join(path.split("/")[:-1]))
+        return send_from_directory(dir_name, file_name)
+    
     return app
-
 
 app = create_app()
 
