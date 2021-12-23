@@ -42,14 +42,10 @@ def create_app():
     app.register_blueprint(attendance_applet)
     app.register_blueprint(classes_applet)
 
-    @app.route('/api', methods=['GET'])
+    @app.route('/', defaults={'path': ''})
+    @app.route('/<path:path>')
     @cross_origin()
-    def index():
-        return {"message": "API working"}
-
-    @app.route('/')
-    @cross_origin()
-    def serve():
+    def serve(path):
         return send_from_directory(app.static_folder, 'index.html')
 
     return app
