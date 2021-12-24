@@ -47,13 +47,6 @@ def create_app():
     def serve(path):
         return send_from_directory(app.static_folder, 'index.html')
 
-    @app.route("/<path:path>")
-    def static_proxy(path):
-        """static folder serve"""
-        file_name = path.split("/")[-1]
-        dir_name = os.path.join(app.static_folder, "/".join(path.split("/")[:-1]))
-        return send_from_directory(dir_name, file_name)
-    
     return app
 
 app = create_app()
